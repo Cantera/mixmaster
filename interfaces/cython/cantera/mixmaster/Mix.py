@@ -21,8 +21,8 @@ class Species:
         self.name = name
         self.symbol = name
         self.index = g.species_index(name)
-        #self.minTemp = g.minTemp(self.index)
-        #self.maxTemp = g.maxTemp(self.index)
+        self.minTemp = g.min_temp
+        self.maxTemp = g.max_temp
         self.molecularWeight = g.molecular_weights[self.index]
         self.c = []
         self.e = g.element_names
@@ -41,12 +41,12 @@ class Species:
         return self.g.partial_molar_enthalpies[self.index] / (gas_constant*t)
 
     def cp_R(self,t):
-        self.g.setTemperature(t)
-        return self.g.cp_R()[self.index]
+        self.g.TP = t, None
+        return self.g.standard_cp_R[self.index]
 
     def entropy_R(self,t):
-        self.g.setTemperature(t)
-        return self.g.entropies_R()[self.index]
+        self.g.TP = t, None
+        return self.g.standard_entropies_R[self.index]
 
 class Mix:
     def __init__(self,g):
@@ -106,32 +106,32 @@ class Mix:
         if temperature and pressure:
             self.g.TP = temperature, pressure
             if equil:
-                self.g.equilibrate('TP',solver=0)
+                self.g.equilibrate('TP',solver='auto')
 
         elif temperature and density:
             self.g.TD = temperature, density
             if equil:
-                self.g.equilibrate('TV',solver=0)
+                self.g.equilibrate('TV',solver='auto')
 
         elif pressure and enthalpy:
             self.g.HP = enthalpy, pressure
             if equil:
-                self.g.equilibrate('HP',solver=0)
+                self.g.equilibrate('HP',solver='auto')
 
         elif pressure and entropy:
             self.g.SP = entropy, pressure
             if equil:
-                self.g.equilibrate('SP',solver=0)
+                self.g.equilibrate('SP',solver='auto')
 
         elif density and entropy:
             self.g.SV = entropy, 1.0/density
             if equil:
-                self.g.equilibrate('SV',solver=0)
+                self.g.equilibrate('SV',solver='auto')
 
         elif density and intEnergy:
             self.g.UV = intEnergy, 1.0/density
             if equil:
-                self.g.equilibrate('UV',solver=0)
+                self.g.equilibrate('UV',solver='auto')
 
 #       else:
 #               handleError('unsupported property pair', warning=1)
