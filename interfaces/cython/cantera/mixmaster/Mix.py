@@ -21,8 +21,8 @@ class Species:
         self.name = name
         self.symbol = name
         self.index = g.species_index(name)
-        self.minTemp = g.min_temp
-        self.maxTemp = g.max_temp
+        self.minTemp = g.species(name).thermo.min_temp
+        self.maxTemp = g.species(name).thermo.max_temp
         self.molecularWeight = g.molecular_weights[self.index]
         self.c = []
         self.e = g.element_names
@@ -106,32 +106,32 @@ class Mix:
         if temperature and pressure:
             self.g.TP = temperature, pressure
             if equil:
-                self.g.equilibrate('TP',solver='auto')
+                self.g.equilibrate('TP')
 
         elif temperature and density:
             self.g.TD = temperature, density
             if equil:
-                self.g.equilibrate('TV',solver='auto')
+                self.g.equilibrate('TV')
 
         elif pressure and enthalpy:
             self.g.HP = enthalpy, pressure
             if equil:
-                self.g.equilibrate('HP',solver='auto')
+                self.g.equilibrate('HP')
 
         elif pressure and entropy:
             self.g.SP = entropy, pressure
             if equil:
-                self.g.equilibrate('SP',solver='auto')
+                self.g.equilibrate('SP')
 
         elif density and entropy:
             self.g.SV = entropy, 1.0/density
             if equil:
-                self.g.equilibrate('SV',solver='auto')
+                self.g.equilibrate('SV')
 
         elif density and intEnergy:
             self.g.UV = intEnergy, 1.0/density
             if equil:
-                self.g.equilibrate('UV',solver='auto')
+                self.g.equilibrate('UV')
 
 #       else:
 #               handleError('unsupported property pair', warning=1)
