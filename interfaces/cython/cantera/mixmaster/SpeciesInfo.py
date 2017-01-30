@@ -177,13 +177,13 @@ class SpeciesInfo(Label):
         try:
             tmp = self.prop[0].get()
             cnd = self.sp.cp_R(tmp)
-            cc = cnd*GasConstant
+            cc = cnd*gas_constant
             self.prop[1].set(cc)
             hnd = self.sp.enthalpy_RT(tmp)
-            hh = hnd*tmp*GasConstant
+            hh = hnd*tmp*gas_constant
             self.prop[2].set(hh)
             snd = self.sp.entropy_R(tmp)
-            ss = snd*tmp*GasConstant
+            ss = snd*tmp*gas_constant
             self.prop[3].set(ss)
 
 
