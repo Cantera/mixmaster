@@ -1,4 +1,4 @@
-from main import MixMaster
+from cantera.mixmaster.main import MixMaster
 
 
 def main():
