@@ -27,7 +27,7 @@ P_LOC = 4
 Y_LOC = 5
 
 
-def testit(e = None):
+def testit(e=None):
     pass
 
 
