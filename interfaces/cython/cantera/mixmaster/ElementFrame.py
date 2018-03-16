@@ -6,16 +6,17 @@
 # This file is part of Cantera. See License.txt in the top-level directory or
 # at http://www.cantera.org/license.txt for license and copyright information.
 
+import string
 import sys
+
+from types import *
+from cantera import *
+
 if sys.version_info[0] == 3:
     from tkinter import *
 else:
     from Tkinter import *
 
-from types import *
-import string
-
-from cantera import *
 
 # (row,column) positions in the periodic table
 _pos = {'H':(1,1), 'He':(1,18),
@@ -34,36 +35,37 @@ _pos = {'H':(1,1), 'He':(1,18),
         }
 
 class PeriodicTable(Frame):
-
     def __init__(self, master, selected=[]):
-        Frame.__init__(self,master)
+        Frame.__init__(self, master)
         self.master = master
         self.control = Frame(self)
-        self.control.config(relief=GROOVE,bd=4)
-        Button(self.control, text = 'Display',command=self.show).pack(fill=X,pady=3, padx=10)
-        Button(self.control, text = 'Clear',command=self.clear).pack(fill=X,pady=3, padx=10)
-        Button(self.control, text = '  OK  ',command=self.get).pack(side=BOTTOM,
-                                                                    fill=X,pady=3, padx=10)
-        Button(self.control, text = 'Cancel',command=self.master.quit).pack(side=BOTTOM,
-                                                                            fill=X,pady=3, padx=10)
+        self.control.config(relief=GROOVE, bd=4)
+        Button(self.control, text='Display', command=self.show).pack(fill=X, pady=3, padx=10)
+        Button(self.control, text='Clear', command=self.clear).pack(fill=X, pady=3, padx=10)
+        Button(self.control, text='  OK  ', command=self.get).pack(side=BOTTOM, fill=X,
+                                                                   pady=3, padx=10)
+        Button(self.control, text='Cancel', command=self.master.quit).pack(side=BOTTOM, fill=X,
+                                                                           pady=3, padx=10)
         self.entries = Frame(self)
         self.entries.pack(side=LEFT)
-        self.control.pack(side=RIGHT,fill=Y)
+        self.control.pack(side=RIGHT, fill=Y)
         self.c = {}
         self.element = {}
         self.selected = selected
-        n=0
+        n = 0
         ncol = 8
         for el in _pos.keys():
             self.element[el] = Frame(self.entries)
             self.element[el].config(relief=GROOVE, bd=4, bg=self.color(el))
-            self.c[el] = Button(self.element[el],text=el,bg=self.color(el),width=3,relief=FLAT)
+            self.c[el] = Button(self.element[el], text=el, bg=self.color(el), width=3, relief=FLAT)
             self.c[el].pack()
-            self.c[el].bind("<Button-1>",self.setColors)
-            self.element[el].grid(row=_pos[el][0]-1, column = _pos[el][1]-1,sticky=W+N+E+S)
+            self.c[el].bind("<Button-1>", self.setColors)
+            self.element[el].grid(row=_pos[el][0] - 1, column=_pos[el][1] - 1, sticky=W+N+E+S)
             n += 1
-        Label(self.entries,text='select the elements to be included, and then press OK.\nTo view the properties of the selected elements, press Display ').grid(row=0, column=2, columnspan=10, sticky=W)
 
+        label_text = 'select the elements to be included, and then press OK.\n' \
+                     'To view the properties of the selected elements, press Display '
+        Label(self.entries, text=label_text).grid(row=0, column=2, columnspan=10, sticky=W)
 
     def select(self, el):
         e = string.capitalize(el)
@@ -75,12 +77,12 @@ class PeriodicTable(Frame):
         self.c[e]['relief'] = FLAT
         self.c[e]['bg'] = self.color(e, sel=0)
 
-    def selectElements(self,ellist):
+    def selectElements(self, ellist):
         for el in ellist:
             ename = el
             self.select(ename)
 
-    def setColors(self,event):
+    def setColors(self, event):
         el = event.widget['text']
         if event.widget['relief'] == RAISED:
             event.widget['relief'] = FLAT
@@ -91,11 +93,13 @@ class PeriodicTable(Frame):
         event.widget['bg'] = back
 
     def color(self, el, sel=0):
-        _normal = ['#88dddd','#dddd88','#dd8888']
-        _selected = ['#aaffff','#ffffaa','#ffaaaa']
+        _normal = ['#88dddd', '#dddd88', '#dd8888']
+        _selected = ['#aaffff', '#ffffaa', '#ffaaaa']
         row, column = _pos[el]
-        if sel: list = _selected
-        else: list = _normal
+        if sel:
+            list = _selected
+        else:
+            list = _normal
         if column < 3:
             return list[0]
         elif column > 12:
@@ -127,45 +131,29 @@ class PeriodicTable(Frame):
             self.c[el]['bg'] = self.color(el, sel=0)
             self.c[el]['relief'] = FLAT
 
+
 class ElementPropertyFrame(Frame):
-    def __init__(self,master,ellist):
-        Frame.__init__(self,master)
+    def __init__(self, master, ellist):
+        Frame.__init__(self, master)
         n = 1
         ellist.sort()
-        Label(self,text='Name').grid(column=0,row=0,sticky=W+S,padx=10,pady=10)
-        Label(self,text='Atomic \nNumber').grid(column=1,row=0,sticky=W+S,padx=10,pady=10)
-        Label(self,
-              text='Atomic \nWeight').grid(column=2,
-                                           row=0,
-                                           sticky=W+S,
-                                           padx=10,
-                                           pady=10)
+        Label(self, text='Name').grid(column=0, row=0, sticky=W+S, padx=10, pady=10)
+        Label(self, text='Atomic \nNumber').grid(column=1, row=0, sticky=W+S, padx=10, pady=10)
+        Label(self, text='Atomic \nWeight').grid(column=2, row=0, sticky=W+S, padx=10, pady=10)
         for el in ellist:
-            Label(self,
-                  text=el.name).grid(column=0,
-                                     row=n,
-                                     sticky=W,
-                                     padx=10)
-            Label(self,
-                  text=repr(el.atomicNumber)).grid(column=1,
-                                                   row=n,
-                                                   sticky=W,
-                                                   padx=10)
-            Label(self,
-                  text=repr(el.atomicWeight)).grid(column=2,
-                                                   row=n,
-                                                   sticky=W,
-                                                   padx=10)
+            Label(self, text=el.name).grid(column=0, row=n, sticky=W, padx=10)
+            Label(self, text=repr(el.atomicNumber)).grid(column=1, row=n, sticky=W, padx=10)
+            Label(self, text=repr(el.atomicWeight)).grid(column=2, row=n, sticky=W, padx=10)
             n += 1
 
 
 # utility functions
-
 def getElements(ellist=None):
     master = Toplevel()
     master.title('Periodic Table of the Elements')
     t = PeriodicTable(master)
-    if ellist: t.selectElements(ellist)
+    if ellist:
+        t.selectElements(ellist)
     t.pack()
     t.focus_set()
     t.grab_set()
