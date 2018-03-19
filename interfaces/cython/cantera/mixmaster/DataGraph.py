@@ -2,13 +2,13 @@
 # at http://www.cantera.org/license.txt for license and copyright information.
 
 import math
-from numpy import *
+import numpy as np
 import sys
 
 if sys.version_info[0] == 3:
-    from tkinter import *
+    import tkinter as tk
 else:
-    from Tkinter import *
+    import Tkinter as tk
 
 
 def plotLimits(ypts, f=0.0, ndiv=5, logscale=0):
@@ -26,7 +26,6 @@ def plotLimits(ypts, f=0.0, ndiv=5, logscale=0):
             ymin = y
 
     dy = abs(ymax - ymin)
-
     if logscale:
         ymin = math.floor(math.log10(ymin))
         ymax = math.floor(math.log10(ymax)) + 1
@@ -38,15 +37,16 @@ def plotLimits(ypts, f=0.0, ndiv=5, logscale=0):
 ##             dy = abs(ymax - ymin)
 ##         else:
     else:
-        ymin -= f*dy
-        ymax += f*dy
+        ymin -= f * dy
+        ymax += f * dy
         dy = abs(ymax - ymin)
 
         try:
             p10 = math.floor(math.log10(0.1 * dy))
             fctr = math.pow(10.0, p10)
         except:
-            return (ymin - 1.0, ymax + 1.0, 1.0)
+            return ymin - 1.0, ymax + 1.0, 1.0
+
         mm = [2.0, 2.5, 2.0]
         i = 0
         while dy / fctr > ndiv:
@@ -58,7 +58,7 @@ def plotLimits(ypts, f=0.0, ndiv=5, logscale=0):
     return ymin, ymax, fctr
 
 
-class DataGraph(Frame):
+class DataGraph(tk.Frame):
     def __init__(self, master, data, ix=0, iy=0,
                  title='', label=('x-axis','y-axis'),
                  logscale=(0, 0), pixelX=500, pixelY=500):
@@ -71,17 +71,17 @@ class DataGraph(Frame):
         self.minY, self.maxY, self.dy = plotLimits(data[iy, :],
                                                    logscale=self.logscale[1])
 
-        Frame.__init__(self, master, relief=RIDGE, bd=2)
-        self.title = Label(self, text=' ')
-        self.title.grid(row=0, column=1, sticky=W+E)
+        tk.Frame.__init__(self, master, relief=tk.RIDGE, bd=2)
+        self.title = tk.Label(self, text=' ')
+        self.title.grid(row=0, column=1, sticky=tk.W + tk.E)
         self.graph_w = pixelX - 120
         self.graph_h = pixelY - 70
         self.origin = (100, 20)
-        self.canvas = Canvas(self, width=pixelX, height=pixelY,
-                             relief=SUNKEN, bd=1)
+        self.canvas = tk.Canvas(self, width=pixelX, height=pixelY,
+                             relief=tk.SUNKEN, bd=1)
         id = self.canvas.create_rectangle(self.origin[0], self.origin[1],
                                           pixelX-20, pixelY-50)
-        self.canvas.grid(row=1, column=1, rowspan=2, sticky=N+S+E+W)
+        self.canvas.grid(row=1, column=1, rowspan=2, sticky=tk.N + tk.S + tk.E + tk.W)
         self.last_points = []
         self.ticks(self.minX, self.maxX, self.dx,
                    self.minY, self.maxY, self.dy, 10)
@@ -89,10 +89,10 @@ class DataGraph(Frame):
         self.draw()
         self.canvas.create_text(self.origin[0] + self.graph_w / 2,
                                 self.origin[1] + self.graph_h + 30,
-                                text=label[0], anchor=N)
+                                text=label[0], anchor=tk.N)
         self.canvas.create_text(self.origin[0] - 50,
                                 self.origin[1] + self.graph_h / 2,
-                                text=label[1], anchor=E)
+                                text=label[1], anchor=tk.E)
 
     def writeValue(self, y):
         yval = '%15.4f' % y
@@ -103,13 +103,13 @@ class DataGraph(Frame):
             self.canvas.delete(id)
 
     def screendata(self):
-        self.xdata = array(self.data[self.ix, :])
-        self.ydata = array(self.data[self.iy, :])
+        self.xdata = np.array(self.data[self.ix, :])
+        self.ydata = np.array(self.data[self.iy, :])
         npts = len(self.ydata)
         if self.logscale[0] > 0:
-            self.xdata = log10(self.xdata)
+            self.xdata = np.log10(self.xdata)
         if self.logscale[1] > 0:
-            self.ydata = log10(self.ydata)
+            self.ydata = np.log10(self.ydata)
         f = float(self.graph_w) / (self.maxX - self.minX)
         self.xdata = (self.xdata - self.minX) * f + self.origin[0]
         f = float(self.graph_h) / (self.maxY - self.minY)
@@ -117,9 +117,9 @@ class DataGraph(Frame):
 
     def toscreen(self, x, y):
         if self.logscale[0] > 0:
-            x = log10(x)
+            x = np.log10(x)
         if self.logscale[1] > 0:
-            y = log10(y)
+            y = np.log10(y)
         f = float(self.graph_w) / (self.maxX - self.minX)
         xx = (x - self.minX) * f + self.origin[0]
         f = float(self.graph_h) / (self.maxY - self.minY)
@@ -144,9 +144,9 @@ class DataGraph(Frame):
         #self.writeValue(y)
         s = '(%g, %g)' % (self.data[self.ix, n], self.data[self.iy, n])
         if n > 0 and self.data[self.iy, n] > self.data[self.iy, n-1]:
-            idt = self.canvas.create_text(xpt + 5, ypt + 5, text=s, anchor=NW)
+            idt = self.canvas.create_text(xpt + 5, ypt + 5, text=s, anchor=tk.NW)
         else:
-            idt = self.canvas.create_text(xpt + 5, ypt - 5, text=s, anchor=SW)
+            idt = self.canvas.create_text(xpt + 5, ypt - 5, text=s, anchor=tk.SW)
 
         return [id, id_xcross, id_ycross, idt]
 
@@ -160,15 +160,15 @@ class DataGraph(Frame):
         if orient == 0:
             xpt, ypt = self.toscreen(y, 1.0)
             ypt = self.origin[1] + self.graph_h + 5
-            self.canvas.create_text(xpt, ypt, text=y, anchor=N)
+            self.canvas.create_text(xpt, ypt, text=y, anchor=tk.N)
         else:
             xpt, ypt = self.toscreen(self.minX, y)
             xpt = self.origin[0] - 5
-            self.canvas.create_text(xpt, ypt, text=y, anchor=E)
+            self.canvas.create_text(xpt, ypt, text=y, anchor=tk.E)
 
     def addLegend(self, text, color=None):
-        m = Message(self, text=text, width=self.graph_w - 10)
-        m.pack(side=BOTTOM)
+        m = tk.Message(self, text=text, width=self.graph_w - 10)
+        m.pack(side=tk.BOTTOM)
         if color:
             m.config(fg=color)
 
