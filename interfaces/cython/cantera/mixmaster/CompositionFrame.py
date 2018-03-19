@@ -2,21 +2,21 @@
 # at http://www.cantera.org/license.txt for license and copyright information.
 
 import sys
+import numpy as np
+
+from cantera import *
+from .SpeciesInfo import SpeciesInfo
+#from KineticsFrame import KineticsFrame
 
 if sys.version_info[0] == 3:
     from tkinter import *
 else:
     from Tkinter import *
 
-from cantera import *
-import numpy as np
-
-from .SpeciesInfo import SpeciesInfo
-#from KineticsFrame import KineticsFrame
-
 _CUTOFF = 1.e-15
 _ATOL = 1.e-15
 _RTOL = 1.e-7
+
 
 class CompFrame(Frame):
     def __init__(self, master):

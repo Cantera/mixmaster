@@ -15,9 +15,9 @@ else:
 
 # automatically-loaded mechanisms
 _autoload = [
-    (' GRI-Mech 3.0', 'gri30.cti'),
-    (' Air', 'air.cti'),
-    (' H/O/Ar', 'h2o2.cti')
+    (' GRI-Mech 3.0', 'default_data/gri30.cti'),
+    (' Air', 'default_data/air.cti'),
+    (' H/O/Ar', 'default_data/h2o2.cti')
     ]
 
 
