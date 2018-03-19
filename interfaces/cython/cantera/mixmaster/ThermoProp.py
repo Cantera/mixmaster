@@ -34,10 +34,7 @@ class ThermoProp:
         self.checked.set(0)
         self.name = name
         self.c = Checkbutton(master, text=name, variable=self.checked,
-                             onvalue=1,
-                             offvalue=0,
-                             command=self.check
-                             )
+                             onvalue=1, offvalue=0, command=self.check)
         self.c.grid(column=0, row=row, sticky=W+N)
 
     def check(self):
