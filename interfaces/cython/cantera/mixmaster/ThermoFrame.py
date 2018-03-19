@@ -1,18 +1,20 @@
 # This file is part of Cantera. See License.txt in the top-level directory or
 # at http://www.cantera.org/license.txt for license and copyright information.
 
-from cantera import *
-
 import sys
-if sys.version_info[0] == 3:
-    from tkinter import *
-else:
-    from Tkinter import *
+
+from cantera import *
 
 from .Units import temperature, pressure, density, specificEnergy, specificEntropy
 from .UnitChooser import UnitVar
 from .ThermoProp import ThermoProp
 from .utilities import handleError
+
+if sys.version_info[0] == 3:
+    from tkinter import *
+else:
+    from Tkinter import *
+
 
 _PRESSURE = 1
 _TEMPERATURE = 0
@@ -21,31 +23,32 @@ _INTENERGY = 3
 _ENTHALPY = 4
 _ENTROPY = 5
 
+
 class ThermoFrame(Frame):
-    def __init__(self,master,top):
-        Frame.__init__(self,master)
+    def __init__(self, master, top):
+        Frame.__init__(self, master)
         self.config(relief=GROOVE, bd=4)
         self.top = top
         self.mix = self.top.mix
         self.warn = 0
         self.internal = Frame(self)
-        self.internal.pack(side=LEFT,anchor=N+W,padx=2,pady=2)
-        self.controls=Frame(self.internal)
-        self.controls.pack(side=LEFT,anchor=N+W,padx=4,pady=5)
+        self.internal.pack(side=LEFT, anchor=N+W, padx=2, pady=2)
+        self.controls = Frame(self.internal)
+        self.controls.pack(side=LEFT, anchor=N+W, padx=4, pady=5)
 
-        self.entries=Frame(self.internal)
-        self.entries.pack(side=LEFT,anchor=N,padx=4,pady=2)
+        self.entries = Frame(self.internal)
+        self.entries.pack(side=LEFT, anchor=N, padx=4, pady=2)
         self.makeEntries()
         self.makeControls()
         self.showState()
 
     def makeControls(self):
-        Button(self.controls,text='Set State', width=15,
-               command=self.setState).grid(column=0,row=0)
+        Button(self.controls, text='Set State', width=15,
+               command=self.setState).grid(column=0, row=0)
         self.equil = IntVar()
         self.equil.set(0)
-        Button(self.controls,text='Equilibrate', width=15,
-               command=self.eqset).grid(column=0,row=1)
+        Button(self.controls, text='Equilibrate', width=15,
+               command=self.eqset).grid(column=0, row=1)
 ##              Radiobutton(self.controls,text='Frozen',variable = self.equil,
 ##                             command=self.freeze,value=0).grid(column=0,row=2,sticky='W')
 ##              Radiobutton(self.controls,text='Equilibrium',
@@ -101,46 +104,41 @@ class ThermoFrame(Frame):
         self.prop[_ENTHALPY].set(self.mix.g.enthalpy_mass)
         self.prop[_ENTROPY].set(self.mix.g.entropy_mass)
 
-    def setState(self,event=None):
+    def setState(self, event=None):
         if event:
             self.warn = 0
         else:
             self.warn = 1
         self.top.mixfr.update()
         i = self.equil.get()
-        optlist = ['frozen','equilibrium']
+        optlist = ['frozen', 'equilibrium']
         opt = [optlist[i]]
 
-        if self.prop[_PRESSURE].isChecked() \
-           and self.prop[_TEMPERATURE].isChecked():
+        if self.prop[_PRESSURE].isChecked() and self.prop[_TEMPERATURE].isChecked():
             self.mix.set(
-                    temperature = self.prop[_TEMPERATURE].get(),
-                    pressure = self.prop[_PRESSURE].get(),
+                    temperature=self.prop[_TEMPERATURE].get(),
+                    pressure=self.prop[_PRESSURE].get(),
                     equil=i)
 
-        elif self.prop[_DENSITY].isChecked() \
-             and self.prop[_TEMPERATURE].isChecked():
+        elif self.prop[_DENSITY].isChecked() and self.prop[_TEMPERATURE].isChecked():
             self.mix.set(
-                    temperature = self.prop[_TEMPERATURE].get(),
-                    density = self.prop[_DENSITY].get(),
+                    temperature=self.prop[_TEMPERATURE].get(),
+                    density=self.prop[_DENSITY].get(),
                     equil=i)
 
-        elif self.prop[_ENTROPY].isChecked() \
-             and self.prop[_PRESSURE].isChecked():
-            self.mix.set(pressure = self.prop[_PRESSURE].get(),
-                         entropy = self.prop[_ENTROPY].get(),
+        elif self.prop[_ENTROPY].isChecked() and self.prop[_PRESSURE].isChecked():
+            self.mix.set(pressure=self.prop[_PRESSURE].get(),
+                         entropy=self.prop[_ENTROPY].get(),
                          equil=i)
 
-        elif self.prop[_ENTHALPY].isChecked() \
-             and self.prop[_PRESSURE].isChecked():
-            self.mix.set(pressure = self.prop[_PRESSURE].get(),
-                         enthalpy = self.prop[_ENTHALPY].get(),
+        elif self.prop[_ENTHALPY].isChecked() and self.prop[_PRESSURE].isChecked():
+            self.mix.set(pressure=self.prop[_PRESSURE].get(),
+                         enthalpy=self.prop[_ENTHALPY].get(),
                          equil=i)
 
-        elif self.prop[_INTENERGY].isChecked() \
-             and self.prop[_DENSITY].isChecked():
-            self.mix.set(density = self.prop[_DENSITY].get(),
-                         intEnergy = self.prop[_INTENERGY].get(),
+        elif self.prop[_INTENERGY].isChecked() and self.prop[_DENSITY].isChecked():
+            self.mix.set(density=self.prop[_DENSITY].get(),
+                         intEnergy=self.prop[_INTENERGY].get(),
                          equil=i)
         else:
             if self.warn > 0:
