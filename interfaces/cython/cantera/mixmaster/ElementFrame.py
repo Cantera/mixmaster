@@ -9,7 +9,7 @@
 import string
 import sys
 
-from cantera import *
+import cantera as ct
 
 if sys.version_info[0] == 3:
     import tkinter as tk
@@ -33,14 +33,15 @@ _pos = {'H':(1,1), 'He':(1,18),
         'In':(5,13), 'Sn':(5,14), 'Sb':(5,15), 'Te':(5,16), 'I':(5,17), 'Xe':(5,18)
         }
 
+
 class PeriodicTable(tk.Frame):
     def __init__(self, master, selected=[]):
         tk.Frame.__init__(self, master)
         self.master = master
         self.control = tk.Frame(self)
         self.control.config(relief=tk.GROOVE, bd=4)
-        tk.Button(self.control, text='Display', command=self.show).pack(fill=X, pady=3, padx=10)
-        tk.Button(self.control, text='Clear', command=self.clear).pack(fill=X, pady=3, padx=10)
+        tk.Button(self.control, text='Display', command=self.show).pack(fill=tk.X, pady=3, padx=10)
+        tk.Button(self.control, text='Clear', command=self.clear).pack(fill=tk.X, pady=3, padx=10)
         tk.Button(self.control, text='  OK  ', command=self.get).pack(side=tk.BOTTOM, fill=tk.X,
                                                                       pady=3, padx=10)
         tk.Button(self.control, text='Cancel', command=self.master.quit).pack(side=tk.BOTTOM, fill=tk.X,
@@ -141,7 +142,7 @@ class ElementPropertyFrame(tk.Frame):
         tk.Label(self, text='Atomic \nNumber').grid(column=1, row=0, sticky=tk.W + tk.S, padx=10, pady=10)
         tk.Label(self, text='Atomic \nWeight').grid(column=2, row=0, sticky=tk.W + tk.S, padx=10, pady=10)
         for el in ellist:
-            tk.Label(self, text=el.name).grid(column=0, row=n, sticky=W, padx=10)
+            tk.Label(self, text=el.name).grid(column=0, row=n, sticky=tk.W, padx=10)
             tk.Label(self, text=repr(el.atomicNumber)).grid(column=1, row=n, sticky=tk.W, padx=10)
             tk.Label(self, text=repr(el.atomicWeight)).grid(column=2, row=n, sticky=tk.W, padx=10)
             n += 1
