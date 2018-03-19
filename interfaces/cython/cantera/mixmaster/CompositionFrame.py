@@ -66,10 +66,8 @@ class CompFrame(tk.Frame):
         g = mix.g
         if c == 0:
             mix.setMoles(mf.comp)
-
         elif c == 1:
             mix.setMass(mf.comp)
-
         elif c == 2:
             pass
         self.top.thermo.setState()
@@ -85,12 +83,10 @@ class CompFrame(tk.Frame):
             mf.var.set("Moles")
             #mf.data = spdict(mix.g, mix.moles())
             mf.comp = mix.moles()
-
         elif c == 1:
             mf.var.set("Mass")
             #mf.data = spdict(mix.g,mix.mass())
             mf.comp = mix.mass()
-
         elif c == 2:
             mf.var.set("Concentration")
             mf.comp = g.concentrations
@@ -195,7 +191,7 @@ class MixtureFrame(tk.Frame):
         DATAKEYS = self.top.species
         self.variable = {}
 
-        n=0
+        n = 0
         ncol = 3
         col = 0
         row = 60
@@ -205,7 +201,7 @@ class MixtureFrame(tk.Frame):
             equil = self.top.thermo.equil.get()
 
         for sp in DATAKEYS:
-            s = sp # self.top.species[sp]
+            s = sp  # self.top.species[sp]
             k = s.index
             if row > 25:
                 row = 0
