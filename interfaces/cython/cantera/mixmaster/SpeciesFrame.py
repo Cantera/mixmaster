@@ -7,37 +7,38 @@
 # at http://www.cantera.org/license.txt for license and copyright information.
 
 import sys
+
+from types import *
+from cantera import *
+
 if sys.version_info[0] == 3:
     from tkinter import *
 else:
     from Tkinter import *
 
-from types import *
-from cantera import *
 
 class SpeciesFrame(Frame):
-
-    def __init__(self, master, speciesList = [], selected=[]):
-        Frame.__init__(self,master)
+    def __init__(self, master, speciesList=[], selected=[]):
+        Frame.__init__(self, master)
         self.master = master
         self.control = Frame(self)
         self.species = {}
         for sp in speciesList:
             self.species[sp.name] = sp
 
-        self.control.config(relief=GROOVE,bd=4)
-        Button(self.control, text = 'Display',command=self.show).pack(fill=X,pady=3, padx=10)
-        Button(self.control, text = 'Clear',command=self.clear).pack(fill=X,pady=3, padx=10)
-        Button(self.control, text = '  OK  ',command=self.get).pack(side=BOTTOM,
-                                                                    fill=X,pady=3, padx=10)
-        Button(self.control, text = 'Cancel',command=self.master.quit).pack(side=BOTTOM,
-                                                                            fill=X,pady=3, padx=10)
+        self.control.config(relief=GROOVE, bd=4)
+        Button(self.control, text='Display', command=self.show).pack(fill=X, pady=3, padx=10)
+        Button(self.control, text='Clear', command=self.clear).pack(fill=X, pady=3, padx=10)
+        Button(self.control, text='  OK  ', command=self.get).pack(side=BOTTOM,
+                                                                   fill=X, pady=3, padx=10)
+        Button(self.control, text = 'Cancel', command=self.master.quit).pack(side=BOTTOM,
+                                                                             fill=X, pady=3, padx=10)
         self.entries = Frame(self)
         self.entries.pack(side=LEFT)
-        self.control.pack(side=RIGHT,fill=Y)
+        self.control.pack(side=RIGHT, fill=Y)
         self.c = {}
         self.selected = selected
-        n=0
+        n = 0
         ncol = 8
         rw = 1
         col = 0
@@ -47,16 +48,17 @@ class SpeciesFrame(Frame):
             el = sp.name
             self.species[el] = Frame(self.entries)
             self.species[el].config(relief=GROOVE, bd=4, bg=self.color(el))
-            self.c[el] = Button(self.species[el],text=el,bg=self.color(el),width=6,relief=FLAT)
+            self.c[el] = Button(self.species[el], text=el, bg=self.color(el), width=6, relief=FLAT)
             self.c[el].pack()
-            self.c[el].bind("<Button-1>",self.setColors)
-            self.species[el].grid(row= rw, column = col,sticky=W+N+E+S)
+            self.c[el].bind("<Button-1>", self.setColors)
+            self.species[el].grid(row=rw, column=col, sticky=W+N+E+S)
             col += 1
             if col > ncol:
                 rw += 1
                 col = 0
-        Label(self.entries,text='select the species to be included, and then press OK.\nTo view the properties of the selected species, press Display ').grid(row=0, column=2, columnspan=10, sticky=W)
-
+        label_message = 'select the species to be included, and then press OK.\n' \
+                        'To view the properties of the selected species, press Display '
+        Label(self.entries, text=label_message).grid(row=0, column=2, columnspan=10, sticky=W)
 
     def select(self, el):
         self.c[el]['relief'] = RAISED
@@ -66,12 +68,12 @@ class SpeciesFrame(Frame):
         self.c[el]['relief'] = FLAT
         self.c[el]['bg'] = self.color(el, sel=0)
 
-    def selectSpecies(self,splist):
+    def selectSpecies(self, splist):
         for sp in splist:
             spname = sp.name
             self.select(spname)
 
-    def setColors(self,event):
+    def setColors(self, event):
         el = event.widget['text']
         if event.widget['relief'] == RAISED:
             event.widget['relief'] = FLAT
@@ -85,8 +87,8 @@ class SpeciesFrame(Frame):
         event.widget['fg'] = fore
 
     def color(self, el, sel=0):
-        _normal = ['#88dddd','#005500','#dd8888']
-        _selected = ['#aaffff','#88dd88','#ffaaaa']
+        _normal = ['#88dddd', '#005500', '#dd8888']
+        _selected = ['#aaffff', '#88dd88', '#ffaaaa']
         #row, column = _pos[el]
         if sel: list = _selected
         else: list = _normal
@@ -151,12 +153,12 @@ class SpeciesFrame(Frame):
 
 
 # utility functions
-
-def getSpecies(splist=[],selected=[]):
+def getSpecies(splist=[], selected=[]):
     master = Toplevel()
     master.title('Species')
-    t = SpeciesFrame(master,splist,selected)
-    if splist: t.selectSpecies(splist)
+    t = SpeciesFrame(master, splist, selected)
+    if splist:
+        t.selectSpecies(splist)
     t.pack()
     t.focus_set()
     t.grab_set()

@@ -2,6 +2,7 @@
 # at http://www.cantera.org/license.txt for license and copyright information.
 
 import sys
+
 from cantera import *
 from .SpeciesInfo import SpeciesInfo
 
