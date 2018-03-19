@@ -1,32 +1,33 @@
 # This file is part of Cantera. See License.txt in the top-level directory or
 # at http://www.cantera.org/license.txt for license and copyright information.
 
-import sys
-if sys.version_info[0] == 3:
-    from tkinter import *
-else:
-    from Tkinter import *
-
 import math
+import sys
 
-class Graph(Frame):
+if sys.version_info[0] == 3:
+    import tkinter as tk
+else:
+    import Tkinter as tk
+
+
+class Graph(tk.Frame):
     def __init__(self, master, title, minX, maxX, minY, maxY, pixelX=250, pixelY=250):
-        Frame.__init__(self, master, relief=RIDGE, bd=2)
+        tk.Frame.__init__(self, master, relief=tk.RIDGE, bd=2)
         # self.pack()
-        self.title = Label(self, text=' ')
-        self.title.grid(row=0, column=1, sticky=W+E)
+        self.title = tk.Label(self, text=' ')
+        self.title.grid(row=0, column=1, sticky=tk.W + tk.E)
         self.graph_w, self.graph_h = pixelX, pixelY
         self.maxX, self.maxY = maxX, maxY  # float(math.floor(maxX + 1)), float(math.floor(maxY + 1))
         self.minX, self.minY = minX, minY  # float(math.floor(minX)), float(math.floor(minY))
-        self.canvas = Canvas(self, width=self.graph_w, height=self.graph_h,
-                             relief=SUNKEN, bd=1)
+        self.canvas = tk.Canvas(self, width=self.graph_w, height=self.graph_h,
+                                relief=tk.SUNKEN, bd=1)
         ymintext = "%8.1f" % self.minY
         ymaxtext = "%8.1f" % self.maxY
-        self.ml = Label(self, text=ymintext)
-        self.mr = Label(self, text=ymaxtext)
-        self.ml.grid(row=2, column=0, sticky=S+E)
-        self.mr.grid(row=1, column=0, sticky=N+E)
-        self.canvas.grid(row=1, column=1, rowspan=2, sticky=N+S+E+W)
+        self.ml = tk.Label(self, text=ymintext)
+        self.mr = tk.Label(self, text=ymaxtext)
+        self.ml.grid(row=2, column=0, sticky=tk.S + tk.E)
+        self.mr.grid(row=1, column=0, sticky=tk.N + tk.E)
+        self.canvas.grid(row=1, column=1, rowspan=2, sticky=tk.N + tk.S + tk.E + tk.W)
         self.last_points = []
 
     def writeValue(self, y):
@@ -56,10 +57,10 @@ class Graph(Frame):
         self.maxX, self.maxY = maxX, maxY
         self.minX, self.minY = minX, minY
         self.canvas.destroy()
-        self.canvas = Canvas(self, width=self.graph_w, height=self.graph_h,
-                             relief=SUNKEN, bd=1)
-        self.canvas.create_text(4, 2, text=self.maxY, anchor=NW)
-        self.canvas.create_text(4, self.graph_h, text=self.minY, anchor=SW)
+        self.canvas = tk.Canvas(self, width=self.graph_w, height=self.graph_h,
+                                relief=tk.SUNKEN, bd=1)
+        self.canvas.create_text(4, 2, text=self.maxY, anchor=tk.NW)
+        self.canvas.create_text(4, self.graph_h, text=self.minY, anchor=tk.SW)
         self.ml["text"] = repr(minX)
         self.mr["text"] = repr(maxX)
         self.canvas.pack()
@@ -84,8 +85,8 @@ class Graph(Frame):
         return
 
     def addLegend(self, text, color=None):
-        m = Message(self, text=text, width=self.graph_w-10)
-        m.pack(side=BOTTOM)
+        m = tk.Message(self, text=text, width=self.graph_w-10)
+        m.pack(side=tk.BOTTOM)
         if color:
             m.config(fg=color)
 
@@ -94,11 +95,11 @@ class Graph(Frame):
 
 
 if __name__ == '__main__':
-    root = Tk()
+    root = tk.Tk()
     g = Graph(root, 'graph1', 0, 10, 0.01, 120)
     h = Graph(root, 'graph2', 0, 15, 0, 20000)
-    g.pack(side=LEFT)
-    h.pack(side=RIGHT)
+    g.pack(side=tk.LEFT)
+    h.pack(side=tk.RIGHT)
 
     #root.protocol("WM_DELETE_WINDOW", root.destroy())
     j = Graph(root, 'Graph', 0, 1000, 0, 2000)
