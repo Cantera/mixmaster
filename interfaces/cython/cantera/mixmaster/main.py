@@ -7,20 +7,16 @@
 # This file is part of Cantera. See License.txt in the top-level directory or
 # at http://www.cantera.org/license.txt for license and copyright information.
 
-# options
-_app_title = 'MixMaster'
-_app_version = '1.0'
-
-import sys
+import numpy as np
 import os
+import sys
 import string
 
 # Cantera imports
-from cantera import *
-from numpy import zeros
-from . import utilities
+import cantera as ct
 
 # local imports
+from . import utilities
 from .TransportFrame import TransportFrame
 from .CompositionFrame import MixtureFrame
 from .ThermoFrame import ThermoFrame
@@ -36,13 +32,18 @@ from .Mix import Mix, Species
 
 # functionality imports
 if sys.version_info[0] == 3:
-    from tkinter import *
+    import tkinter as tk
     from tkinter import messagebox
     from tkinter.filedialog import askopenfilename
 else:
-    from Tkinter import *
+    import Tkinter as tk
     import tkMessageBox as messagebox
     from tkFileDialog import askopenfilename
+
+
+# options
+_app_title = 'MixMaster'
+_app_version = '1.0'
 
 
 def testit():
@@ -58,7 +59,7 @@ class MixMaster:
         if master:
             self.master = master
         else:
-            t = Tk()
+            t = tk.Tk()
             self.master = t
 
         self._windows = {}
@@ -66,10 +67,10 @@ class MixMaster:
         self.windows = []
 
         self.cwin = ControlWindow(_app_title, self.master)
-        self.cwin.master.resizable(FALSE, FALSE)
+        self.cwin.master.resizable(tk.FALSE, tk.FALSE)
 
-        self.menubar = Frame(self.cwin, relief=GROOVE, bd=2)
-        self.menubar.grid(row=0, column=0, sticky=N + W + E)
+        self.menubar = tk.Frame(self.cwin, relief=tk.GROOVE, bd=2)
+        self.menubar.grid(row=0, column=0, sticky=tk.N + tk.W + tk.E)
 
         self.mixfr = None
         self.thermo = None
@@ -81,7 +82,7 @@ class MixMaster:
         self.fname = None
 
         self.mechframe = MechManager(self.cwin, self)
-        self.mechframe.grid(row=1, column=0, sticky=N + W)
+        self.mechframe.grid(row=1, column=0, sticky=tk.N + tk.W)
 
         fileitems = [('Load Mixture...', self.openmech),
                      ('Import Mechanism File...', self.importfile),
@@ -93,14 +94,14 @@ class MixMaster:
                      ]
         self.filemenu = make_menu('File', self.menubar, fileitems)
 
-        self.vtherm = IntVar()
-        self.vcomp = IntVar()
-        self.vtran = IntVar()
-        self.vkin = IntVar()
-        self.vrxn = IntVar()
+        self.vtherm = tk.IntVar()
+        self.vcomp = tk.IntVar()
+        self.vtran = tk.IntVar()
+        self.vkin = tk.IntVar()
+        self.vrxn = tk.IntVar()
         self.vrxn.set(0)
         self.vtherm.set(1)
-        self.vedit = IntVar()
+        self.vedit = tk.IntVar()
 
         dataitems = [(' Import Flame Data', testit),
                      (' Import CSV Data', testit),
@@ -161,7 +162,7 @@ class MixMaster:
         ff = os.path.splitext(self.fname)
 
         try:
-            self.mech = Solution(pathname)
+            self.mech = ct.Solution(pathname)
             self.mechname = ff[0]
 
         except Exception as e:
@@ -191,7 +192,7 @@ class MixMaster:
         else:
             wstate = 'withdrawn'
         self._windows[name] = w
-        self._vis[name] = IntVar()
+        self._vis[name] = tk.IntVar()
         if wstate == 'withdrawn':
             self._windows[name].master.withdraw()
         else:
@@ -267,7 +268,7 @@ class MixMaster:
 
     def show(self, frame, vis, row, col):
         if vis:
-            frame.grid(row=row, column=col, sticky=N+E+S+W)
+            frame.grid(row=row, column=col, sticky=tk.N + tk.E + tk.S + tk.W)
         else:
             frame.grid_forget()
 
@@ -294,9 +295,9 @@ class MixMaster:
 
     def aboutmix(self):
         message_string = """
-                     MixMaster
+        MixMaster
 
-                    version """ + _app_version + """
+        version """ + _app_version + """
 
         written by:
 
