@@ -124,7 +124,7 @@ class MixMaster:
 
         self.helpmenu = make_menu('Help', self.menubar,
                                   [('About ' + _app_title + '...', self.aboutmix),
-                                   ('About Cantera...', testit),
+                                   ('About Cantera...', self.about_cantera),
                                    []
 
                                    ])
@@ -308,6 +308,17 @@ class MixMaster:
         California Institute of Technology
         """
         m = messagebox.showinfo(title='About MixMaster', message=message_string)
+
+    def about_cantera(self):
+        message_string = """
+        Cantera
+        
+        version""" + ct.__version__ + """
+        
+        http://cantera.github.io/docs/sphinx/html/index.html
+        
+        """
+        m = messagebox.showinfo(title='About Cantera', message=message_string)
 
 
 if __name__ == "__main__":
