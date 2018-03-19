@@ -9,46 +9,43 @@ from .SpeciesInfo import SpeciesInfo
 #from KineticsFrame import KineticsFrame
 
 if sys.version_info[0] == 3:
-    from tkinter import *
+    import tkinter as tk
 else:
-    from Tkinter import *
+    import Tkinter as tk
 
 _CUTOFF = 1.e-15
 _ATOL = 1.e-15
 _RTOL = 1.e-7
 
 
-class CompFrame(Frame):
+class CompFrame(tk.Frame):
     def __init__(self, master):
-        Frame.__init__(self, master)
-        self.config(relief=FLAT, bd=4)
+        tk.Frame.__init__(self, master)
+        self.config(relief=tk.FLAT, bd=4)
         self.top = self.master.top
-        self.controls = Frame(self)
-        self.hide = IntVar()
+        self.controls = tk.Frame(self)
+        self.hide = tk.IntVar()
         self.hide.set(0)
-        self.comp = IntVar()
+        self.comp = tk.IntVar()
         self.comp.set(0)
-        self.controls.grid(column=1, row=0, sticky=W+E+N)
+        self.controls.grid(column=1, row=0, sticky=tk.W + tk.E + tk.N)
         self.makeControls()
         mf = self.master
 
     def makeControls(self):
-        Radiobutton(self.controls, text='Moles',
-                    variable=self.comp, value=0,
-                    command=self.show).grid(column=0, row=0, sticky=W)
-        Radiobutton(self.controls, text='Mass',
-                    variable=self.comp, value=1,
-                    command=self.show).grid(column=0, row=1, sticky=W)
-        Radiobutton(self.controls, text='Concentration',
-                    variable=self.comp, value=2,
-                    command=self.show).grid(column=0, row=2, sticky=W)
-        Button(self.controls, text='Clear',
-               command=self.zero).grid(column=0, row=4, sticky=W+E)
-        Button(self.controls, text='Normalize',
-               command=self.norm).grid(column=0, row=5, sticky=W+E)
-        Checkbutton(self.controls, text='Hide Missing\nSpecies',
-                    variable=self.hide, onvalue=1,
-                    offvalue=0, command=self.master.redo).grid(column=0, row=3, sticky=W)
+        tk.Radiobutton(self.controls, text='Moles', variable=self.comp, value=0,
+                       command=self.show).grid(column=0, row=0, sticky=tk.W)
+        tk.Radiobutton(self.controls, text='Mass', variable=self.comp, value=1,
+                       command=self.show).grid(column=0, row=1, sticky=tk.W)
+        tk.Radiobutton(self.controls, text='Concentration', variable=self.comp, value=2,
+                       command=self.show).grid(column=0, row=2, sticky=tk.W)
+        tk.Button(self.controls, text='Clear', command=self.zero).grid(column=0, row=4,
+                                                                       sticky=tk.W + tk.E)
+        tk.Button(self.controls, text='Normalize', command=self.norm).grid(column=0, row=5,
+                                                                           sticky=tk.W + tk.E)
+        tk.Checkbutton(self.controls, text='Hide Missing\nSpecies',
+                       variable=self.hide, onvalue=1,
+                       offvalue=0, command=self.master.redo).grid(column=0, row=3, sticky=tk.W)
 
     def norm(self):
         mf = self.master
@@ -115,18 +112,18 @@ class CompFrame(Frame):
         self.show()
 
 
-class MixtureFrame(Frame):
+class MixtureFrame(tk.Frame):
     def __init__(self, master, top):
-        Frame.__init__(self, master)
-        self.config(relief=GROOVE, bd=4)
+        tk.Frame.__init__(self, master)
+        self.config(relief=tk.GROOVE, bd=4)
         self.top = top
         self.top.mixframe = self
         self.g = self.top.mix.g
         #self.scroll = Scrollbar(self)
-        self.entries=Frame(self)
+        self.entries = tk.Frame(self)
         #self.scroll.config(command=self.entries.xview)
         #self.scroll.grid(column=0,row=1)
-        self.var = StringVar()
+        self.var = tk.StringVar()
         self.var.set("Moles")
         self.comp = np.array(self.top.mix.moles())
         self.names = self.top.mix.speciesNames()
@@ -142,8 +139,8 @@ class MixtureFrame(Frame):
         self.c = CompFrame(self)
         #self.k = KineticsFrame(self)
         self.active = self.c
-        self.c.grid(column=1, row=0, sticky=E+W+N+S)
-        #self.k.grid(column=2,row=0,sticky=E+W+N+S)
+        self.c.grid(column=1, row=0, sticky=tk.E + tk.W + tk.N + tk.S)
+        #self.k.grid(column=2,row=0,sticky=tk.E + tk.W + tk.N + tk.S)
 
     def update(self):
         self.newcomp = 0
@@ -152,7 +149,7 @@ class MixtureFrame(Frame):
             current = self.comp[k]
             val = self.variable[s].get()
             dv = abs(val - current)
-            if dv > _RTOL*abs(current) + _ATOL:
+            if dv > _RTOL * abs(current) + _ATOL:
                 self.comp[k] = val
                 self.newcomp = 1
 
@@ -168,7 +165,7 @@ class MixtureFrame(Frame):
     def redo(self):
         self.update()
         self.entries.destroy()
-        self.entries=Frame(self)
+        self.entries = tk.Frame(self)
         self.makeEntries()
 
     def minimize(self, Event=None):
@@ -180,7 +177,7 @@ class MixtureFrame(Frame):
     def maximize(self, Event=None):
         self.c.hide.set(0)
         self.redo()
-        self.c.grid(column=1, row=0, sticky=E+W+N+S)
+        self.c.grid(column=1, row=0, sticky=tk.E + tk.W + tk.N + tk.S)
         self.entries.bind("<Double-1>", self.minimize)
 
     def up(self, x):
@@ -193,8 +190,8 @@ class MixtureFrame(Frame):
             #self.top.kinetics.show()
 
     def makeEntries(self):
-        self.entries.grid(row=0, column=0, sticky=W+N+S+E)
-        self.entries.config(relief=FLAT, bd=4)
+        self.entries.grid(row=0, column=0, sticky=tk.W + tk.N + tk.S + tk.E)
+        self.entries.config(relief=tk.FLAT, bd=4)
         DATAKEYS = self.top.species
         self.variable = {}
 
@@ -213,13 +210,13 @@ class MixtureFrame(Frame):
             if row > 25:
                 row = 0
                 col += 2
-                l = Label(self.entries, text='Species')
-                l.grid(column=col, row=row, sticky=E+W)
-                e1 = Entry(self.entries)
-                e1.grid(column=col+1, row=row, sticky=E+W)
+                l = tk.Label(self.entries, text='Species')
+                l.grid(column=col, row=row, sticky=tk.E + tk.W)
+                e1 = tk.Entry(self.entries)
+                e1.grid(column=col+1, row=row, sticky=tk.E + tk.W)
                 e1['textvariable'] = self.var
-                e1.config(state=DISABLED)
-                e1.config(bg='lightyellow', relief=RIDGE)
+                e1.config(state=tk.DISABLED)
+                e1.config(bg='lightyellow', relief=tk.RIDGE)
                 row += 1
 
             spname = s.name
@@ -229,20 +226,20 @@ class MixtureFrame(Frame):
             else:
                 showit = 0
 
-            l = SpeciesInfo(self.entries, species=s, text=spname, relief=FLAT,
-                            justify=RIGHT, fg='darkblue')
-            entry1 = Entry(self.entries)
-            self.variable[spname] = DoubleVar()
+            l = SpeciesInfo(self.entries, species=s, text=spname, relief=tk.FLAT,
+                            justify=tk.RIGHT, fg='darkblue')
+            entry1 = tk.Entry(self.entries)
+            self.variable[spname] = tk.DoubleVar()
             self.variable[spname].set(self.comp[k])
             entry1['textvariable'] = self.variable[spname]
             entry1.bind('<Any-Leave>', self.up)
             if showit:
-                l.grid(column=col, row=row, sticky=E)
+                l.grid(column=col, row=row, sticky=tk.E)
                 entry1.grid(column=col + 1, row=row)
                 n += 1
                 row += 1
             if equil == 1:
-                entry1.config(state=DISABLED, bg='lightgray')
+                entry1.config(state=tk.DISABLED, bg='lightgray')
 ##                 if self.c.hide.get():
 ##                  b=Button(self.entries, height=1, command=self.maximize)
 ##              else:
