@@ -3,39 +3,38 @@
 
 import sys
 
-from cantera import *
+import cantera as ct
 from .SpeciesInfo import SpeciesInfo
 
 if sys.version_info[0] == 3:
-    from tkinter import *
+    import tkinter as tk
 else:
-    from Tkinter import *
-
+    import Tkinter as tk
 
 _CUTOFF = 1.e-15
 _ATOL = 1.e-15
 _RTOL = 1.e-7
 
 
-class NewFlowFrame(Frame):
+class NewFlowFrame(tk.Frame):
     def __init__(self, master):
-        Frame.__init__(self, master)
-        self.config(relief=GROOVE, bd=4)
+        tk.Frame.__init__(self, master)
+        self.config(relief=tk.GROOVE, bd=4)
         self.app = self.master.app
-        self.controls = Frame(self)
-        self.hide = IntVar()
+        self.controls = tk.Frame(self)
+        self.hide = tk.IntVar()
         self.hide.set(0)
-        self.p = DoubleVar()
+        self.p = tk.DoubleVar()
         #self.comp.set(1.0)
-        self.controls.grid(column=1, row=0, sticky=W+E+N)
+        self.controls.grid(column=1, row=0, sticky=tk.W + tk.E + tk.N)
         #self.makeControls()
         mf = self.master
 
-        e1 = Entry(self)
-        e1.grid(column=0, row=0, sticky=E+W)
+        e1 = tk.Entry(self)
+        e1.grid(column=0, row=0, sticky=tk.E + tk.W)
         e1['textvariable'] = self.p
         #e1.config(state=ENABLED)
-        e1.config(relief=RIDGE)
+        e1.config(relief=tk.RIDGE)
 
 ##      def makeControls(self):
 ##              Radiobutton(self.controls,text='Moles',
