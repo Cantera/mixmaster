@@ -1,51 +1,52 @@
 # This file is part of Cantera. See License.txt in the top-level directory or
 # at http://www.cantera.org/license.txt for license and copyright information.
 
-import os
 import math
+import os
 import sys
-from cantera import *
+
+import cantera as ct
 #from Cantera.ck2ctml import ck2ctml
 
 if sys.version_info[0] == 3:
-    from tkinter import *
+    import tkinter as tk
     from tkinter.filedialog import askopenfilename
 else:
-    from Tkinter import *
+    import Tkinter as tk
     from tkFileDialog import askopenfilename
 
 
-class ImportFrame(Frame):
+class ImportFrame(tk.Frame):
     def __init__(self, top):
-        self.master = Toplevel()
+        self.master = tk.Toplevel()
         self.master.title('Convert and Import CK File')
         self.master.protocol("WM_DELETE_WINDOW", self.hide)
 
-        Frame.__init__(self, self.master)
-        self.config(relief=GROOVE, bd=4)
+        tk.Frame.__init__(self, self.master)
+        self.config(relief=tk.GROOVE, bd=4)
         self.top = top
-        self.infile = StringVar()
+        self.infile = tk.StringVar()
 
-        Label(self, text="Input File").grid(row=0, column=0)
-        Entry(self, width=40, textvariable=self.infile).grid(column=1, row=0)
-        Button(self, text='Browse', command=self.browseForInput).grid(row=0, column=2)
+        tk.Label(self, text="Input File").grid(row=0, column=0)
+        tk.Entry(self, width=40, textvariable=self.infile).grid(column=1, row=0)
+        tk.Button(self, text='Browse', command=self.browseForInput).grid(row=0, column=2)
 
-        self.thermo = StringVar()
-        Label(self, text="Thermodynamic Database").grid(row=1, column=0)
-        Entry(self, width=40, textvariable=self.thermo).grid(column=1, row=1)
-        Button(self, text='Browse', command=self.browseForThermo).grid(row=1, column=2)
+        self.thermo = tk.StringVar()
+        tk.Label(self, text="Thermodynamic Database").grid(row=1, column=0)
+        tk.Entry(self, width=40, textvariable=self.thermo).grid(column=1, row=1)
+        tk.Button(self, text='Browse', command=self.browseForThermo).grid(row=1, column=2)
 
-        self.transport = StringVar()
-        Label(self, text="Transport Database").grid(row=2, column=0)
-        Entry(self, width=40, textvariable=self.transport).grid(column=1, row=2)
-        Button(self, text='Browse', command=self.browseForTransport).grid(row=2, column=2)
+        self.transport = tk.StringVar()
+        tk.Label(self, text="Transport Database").grid(row=2, column=0)
+        tk.Entry(self, width=40, textvariable=self.transport).grid(column=1, row=2)
+        tk.Button(self, text='Browse', command=self.browseForTransport).grid(row=2, column=2)
 
-        bframe = Frame(self)
-        bframe.config(relief=GROOVE, bd=1)
+        bframe = tk.Frame(self)
+        bframe.config(relief=tk.GROOVE, bd=1)
         bframe.grid(row=100, column=0)
-        Button(bframe, text='OK', width=8, command=self.importfile).grid(row=0, column=0)
+        tk.Button(bframe, text='OK', width=8, command=self.importfile).grid(row=0, column=0)
         self.grid(column=0, row=0)
-        Button(bframe, text='Cancel', width=8, command=self.hide).grid(row=0, column=1)
+        tk.Button(bframe, text='Cancel', width=8, command=self.hide).grid(row=0, column=1)
         self.grid(column=0, row=0)
         self.hide()
 
@@ -87,7 +88,7 @@ class ImportFrame(Frame):
             nm = ff[0]
         else:
             nm = ff
-        outfile = p+os.sep + nm + '.xml'
+        outfile = p + os.sep + nm + '.xml'
         try:
             print('not supported.')
             #ck2ctml(infile = ckfile, thermo = thermdb,
