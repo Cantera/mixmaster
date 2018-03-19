@@ -316,10 +316,10 @@ class DataFrame(tk.Frame):
             self.gdot = self.plt.plot(n, 'red')
 
     def updateplot(self, event=None):
-        if self.data == None:
+        if self.data is None:
             return
 
-        if self.zdata == None:
+        if self.zdata is None:
             self.newplot()
 
         n = self.n.get()
