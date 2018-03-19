@@ -8,34 +8,42 @@
 
 import sys
 
-from types import *
-from cantera import *
+import cantera as ct
+
 
 if sys.version_info[0] == 3:
-    from tkinter import *
+    import tkinter as tk
 else:
-    from Tkinter import *
+    import Tkinter as tk
 
 
-class SpeciesFrame(Frame):
+class SpeciesFrame(tk.Frame):
     def __init__(self, master, speciesList=[], selected=[]):
-        Frame.__init__(self, master)
+        tk.Frame.__init__(self, master)
         self.master = master
-        self.control = Frame(self)
+        self.control = tk.Frame(self)
         self.species = {}
         for sp in speciesList:
             self.species[sp.name] = sp
 
-        self.control.config(relief=GROOVE, bd=4)
-        Button(self.control, text='Display', command=self.show).pack(fill=X, pady=3, padx=10)
-        Button(self.control, text='Clear', command=self.clear).pack(fill=X, pady=3, padx=10)
-        Button(self.control, text='  OK  ', command=self.get).pack(side=BOTTOM,
-                                                                   fill=X, pady=3, padx=10)
-        Button(self.control, text = 'Cancel', command=self.master.quit).pack(side=BOTTOM,
-                                                                             fill=X, pady=3, padx=10)
-        self.entries = Frame(self)
-        self.entries.pack(side=LEFT)
-        self.control.pack(side=RIGHT, fill=Y)
+        self.control.config(relief=tk.GROOVE, bd=4)
+        tk.Button(self.control, text='Display', command=self.show).pack(fill=tk.X,
+                                                                        pady=3,
+                                                                        padx=10)
+        tk.Button(self.control, text='Clear', command=self.clear).pack(fill=tk.X,
+                                                                       pady=3,
+                                                                       padx=10)
+        tk.Button(self.control, text='  OK  ', command=self.get).pack(side=tk.BOTTOM,
+                                                                      fill=tk.X,
+                                                                      pady=3,
+                                                                      padx=10)
+        tk.Button(self.control, text='Cancel', command=self.master.quit).pack(side=tk.BOTTOM,
+                                                                              fill=tk.X,
+                                                                              pady=3,
+                                                                              padx=10)
+        self.entries = tk.Frame(self)
+        self.entries.pack(side=tk.LEFT)
+        self.control.pack(side=tk.RIGHT, fill=tk.Y)
         self.c = {}
         self.selected = selected
         n = 0
@@ -46,26 +54,26 @@ class SpeciesFrame(Frame):
         list.sort()
         for sp in list:
             el = sp.name
-            self.species[el] = Frame(self.entries)
-            self.species[el].config(relief=GROOVE, bd=4, bg=self.color(el))
-            self.c[el] = Button(self.species[el], text=el, bg=self.color(el), width=6, relief=FLAT)
+            self.species[el] = tk.Frame(self.entries)
+            self.species[el].config(relief=tk.GROOVE, bd=4, bg=self.color(el))
+            self.c[el] = tk.Button(self.species[el], text=el, bg=self.color(el), width=6, relief=tk.FLAT)
             self.c[el].pack()
             self.c[el].bind("<Button-1>", self.setColors)
-            self.species[el].grid(row=rw, column=col, sticky=W+N+E+S)
+            self.species[el].grid(row=rw, column=col, sticky=tk.W + tk.N + tk.E + tk.S)
             col += 1
             if col > ncol:
                 rw += 1
                 col = 0
         label_message = 'select the species to be included, and then press OK.\n' \
                         'To view the properties of the selected species, press Display '
-        Label(self.entries, text=label_message).grid(row=0, column=2, columnspan=10, sticky=W)
+        tk.Label(self.entries, text=label_message).grid(row=0, column=2, columnspan=10, sticky=tk.W)
 
     def select(self, el):
-        self.c[el]['relief'] = RAISED
+        self.c[el]['relief'] = tk.RAISED
         self.c[el]['bg'] = self.color(el, sel=1)
 
     def deselect(self, el):
-        self.c[el]['relief'] = FLAT
+        self.c[el]['relief'] = tk.FLAT
         self.c[el]['bg'] = self.color(el, sel=0)
 
     def selectSpecies(self, splist):
@@ -75,12 +83,12 @@ class SpeciesFrame(Frame):
 
     def setColors(self, event):
         el = event.widget['text']
-        if event.widget['relief'] == RAISED:
-            event.widget['relief'] = FLAT
+        if event.widget['relief'] == tk.RAISED:
+            event.widget['relief'] = tk.FLAT
             back = self.color(el, sel=0)
             fore = '#ffffff'
-        elif event.widget['relief'] == FLAT:
-            event.widget['relief'] = RAISED
+        elif event.widget['relief'] == tk.FLAT:
+            event.widget['relief'] = tk.RAISED
             fore = '#000000'
             back = self.color(el, sel=1)
         event.widget['bg'] = back
@@ -90,8 +98,10 @@ class SpeciesFrame(Frame):
         _normal = ['#88dddd', '#005500', '#dd8888']
         _selected = ['#aaffff', '#88dd88', '#ffaaaa']
         #row, column = _pos[el]
-        if sel: list = _selected
-        else: list = _normal
+        if sel:
+            list = _selected
+        else:
+            list = _normal
         return list[1]
         #if column < 3:
         #    return list[0]
@@ -103,14 +113,14 @@ class SpeciesFrame(Frame):
     def show(self):
         selected = []
         for sp in self.species.values():
-            if self.c[sp.name]['relief'] == RAISED:
+            if self.c[sp.name]['relief'] == tk.RAISED:
                 selected.append(sp)
         #showElementProperties(selected)
 
     def get(self):
         self.selected = []
         for sp in self.species.values():
-            if self.c[sp.name]['relief'] == RAISED:
+            if self.c[sp.name]['relief'] == tk.RAISED:
                 self.selected.append(sp)
         #self.master.quit()'
         self.master.destroy()
@@ -118,7 +128,7 @@ class SpeciesFrame(Frame):
     def clear(self):
         for sp in self.species.values():
             self.c[sp]['bg'] = self.color(sp, sel=0)
-            self.c[sp]['relief'] = FLAT
+            self.c[sp]['relief'] = tk.FLAT
 
 ## class ElementPropertyFrame(Frame):
 ##     def __init__(self,master,ellist):
@@ -154,7 +164,7 @@ class SpeciesFrame(Frame):
 
 # utility functions
 def getSpecies(splist=[], selected=[]):
-    master = Toplevel()
+    master = tk.Toplevel()
     master.title('Species')
     t = SpeciesFrame(master, splist, selected)
     if splist:
@@ -165,17 +175,17 @@ def getSpecies(splist=[], selected=[]):
     t.wait_window()
     try:
         master.destroy()
-    except TclError:
+    except tk.TclError:
         pass
     return t.selected
 
 
 # display table of selected element properties in a window
 def showElementProperties(ellist):
-    m = Tk()
+    m = tk.Tk()
     m.title('Element Properties')
     elem = []
-    ElementPropertyFrame(m, ellist).pack()
+    tk.ElementPropertyFrame(m, ellist).pack()
 
 
 if __name__ == "__main__":
