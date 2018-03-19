@@ -35,7 +35,6 @@ class ImportFrame(Frame):
         Entry(self, width=40, textvariable=self.thermo).grid(column=1, row=1)
         Button(self, text='Browse', command=self.browseForThermo).grid(row=1, column=2)
 
-
         self.transport = StringVar()
         Label(self, text="Transport Database").grid(row=2, column=0)
         Entry(self, width=40, textvariable=self.transport).grid(column=1, row=2)
@@ -75,7 +74,6 @@ class ImportFrame(Frame):
         if pathname:
             self.transport.set(pathname)
         self.show()
-
 
     def importfile(self):
         ckfile = self.infile.get()
@@ -125,5 +123,4 @@ class ImportFrame(Frame):
         #if v == 0:
         #       self.hide()
         #       return
-
         self.master.deiconify()
