@@ -3,7 +3,7 @@
 
 import sys
 
-from cantera import *
+import cantera as ct
 
 from .Units import temperature, pressure, density, specificEnergy, specificEntropy
 from .UnitChooser import UnitVar
@@ -11,9 +11,9 @@ from .ThermoProp import ThermoProp
 from .utilities import handleError
 
 if sys.version_info[0] == 3:
-    from tkinter import *
+    import tkinter as tk
 else:
-    from Tkinter import *
+    import Tkinter as tk
 
 
 _PRESSURE = 1
@@ -24,31 +24,31 @@ _ENTHALPY = 4
 _ENTROPY = 5
 
 
-class ThermoFrame(Frame):
+class ThermoFrame(tk.Frame):
     def __init__(self, master, top):
-        Frame.__init__(self, master)
-        self.config(relief=GROOVE, bd=4)
+        tk.Frame.__init__(self, master)
+        self.config(relief=tk.GROOVE, bd=4)
         self.top = top
         self.mix = self.top.mix
         self.warn = 0
-        self.internal = Frame(self)
-        self.internal.pack(side=LEFT, anchor=N+W, padx=2, pady=2)
-        self.controls = Frame(self.internal)
-        self.controls.pack(side=LEFT, anchor=N+W, padx=4, pady=5)
+        self.internal = tk.Frame(self)
+        self.internal.pack(side=tk.LEFT, anchor=tk.N + tk.W, padx=2, pady=2)
+        self.controls = tk.Frame(self.internal)
+        self.controls.pack(side=tk.LEFT, anchor=tk.N + tk.W, padx=4, pady=5)
 
-        self.entries = Frame(self.internal)
-        self.entries.pack(side=LEFT, anchor=N, padx=4, pady=2)
+        self.entries = tk.Frame(self.internal)
+        self.entries.pack(side=tk.LEFT, anchor=tk.N, padx=4, pady=2)
         self.makeEntries()
         self.makeControls()
         self.showState()
 
     def makeControls(self):
-        Button(self.controls, text='Set State', width=15,
-               command=self.setState).grid(column=0, row=0)
-        self.equil = IntVar()
+        tk.Button(self.controls, text='Set State', width=15,
+                  command=self.setState).grid(column=0, row=0)
+        self.equil = tk.IntVar()
         self.equil.set(0)
-        Button(self.controls, text='Equilibrate', width=15,
-               command=self.eqset).grid(column=0, row=1)
+        tk.Button(self.controls, text='Equilibrate', width=15,
+                  command=self.eqset).grid(column=0, row=1)
 ##              Radiobutton(self.controls,text='Frozen',variable = self.equil,
 ##                             command=self.freeze,value=0).grid(column=0,row=2,sticky='W')
 ##              Radiobutton(self.controls,text='Equilibrium',
@@ -115,16 +115,14 @@ class ThermoFrame(Frame):
         opt = [optlist[i]]
 
         if self.prop[_PRESSURE].isChecked() and self.prop[_TEMPERATURE].isChecked():
-            self.mix.set(
-                    temperature=self.prop[_TEMPERATURE].get(),
-                    pressure=self.prop[_PRESSURE].get(),
-                    equil=i)
+            self.mix.set(temperature=self.prop[_TEMPERATURE].get(),
+                         pressure=self.prop[_PRESSURE].get(),
+                         equil=i)
 
         elif self.prop[_DENSITY].isChecked() and self.prop[_TEMPERATURE].isChecked():
-            self.mix.set(
-                    temperature=self.prop[_TEMPERATURE].get(),
-                    density=self.prop[_DENSITY].get(),
-                    equil=i)
+            self.mix.set(temperature=self.prop[_TEMPERATURE].get(),
+                         density=self.prop[_DENSITY].get(),
+                         equil=i)
 
         elif self.prop[_ENTROPY].isChecked() and self.prop[_PRESSURE].isChecked():
             self.mix.set(pressure=self.prop[_PRESSURE].get(),
