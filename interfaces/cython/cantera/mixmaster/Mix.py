@@ -1,8 +1,8 @@
 # This file is part of Cantera. See License.txt in the top-level directory or
 # at http://www.cantera.org/license.txt for license and copyright information.
 
-from numpy import zeros, ones
-from cantera import gas_constant
+import numpy as np
+import cantera as ct
 from .utilities import handleError
 
 
@@ -28,7 +28,7 @@ class Species:
         self.molecularWeight = g.molecular_weights[self.index]
         self.c = []
         self.e = g.element_names
-        self.hf0 = self.enthalpy_RT(298.15) * gas_constant * 298.15
+        self.hf0 = self.enthalpy_RT(298.15) * ct.gas_constant * 298.15
         g.TPX = t, p, x
         for n in range(len(self.e)):
             na = g.n_atoms(self.index, n)
@@ -40,7 +40,7 @@ class Species:
 
     def enthalpy_RT(self, t):
         self.g.TP = t, None
-        return self.g.partial_molar_enthalpies[self.index] / (gas_constant * t)
+        return self.g.partial_molar_enthalpies[self.index] / (ct.gas_constant * t)
 
     def cp_R(self, t):
         self.g.TP = t, None
@@ -56,7 +56,7 @@ class Mix:
         self.g = g
         self._mech = g
         self.nsp = g.n_species
-        self._moles = zeros(self.nsp, 'd')
+        self._moles = np.zeros(self.nsp, 'd')
         self.wt = g.molecular_weights
 
     def setMoles(self, m):
@@ -137,7 +137,6 @@ class Mix:
 
 #       else:
 #               handleError('unsupported property pair', warning=1)
-
 
         total_moles = total_mass / self.g.mean_molecular_weight
         self._moles = self.g.X * total_moles
