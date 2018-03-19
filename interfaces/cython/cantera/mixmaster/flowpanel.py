@@ -3,12 +3,12 @@
 
 # functionality imports
 import sys
-from Cantera.gui import menu, newflow
+from cantera.mixmaster import menu, newflow
 
 if sys.version_info[0] == 3:
-    from tkinter import *
+    import tkinter as tk
 else:
-    from Tkinter import *
+    import Tkinter as tk
 
 
 class App:
@@ -18,14 +18,14 @@ class App:
         except:
             self.root = master
 
-        self.frame = Frame(master)
+        self.frame = tk.Frame(master)
         self.frame.grid(row=0, column=0)
         self.makemenu(self.frame)
 
-        self.quitbutton = Button(self.frame, text='Quit', command=self.frame.quit)
+        self.quitbutton = tk.Button(self.frame, text='Quit', command=self.frame.quit)
         self.quitbutton.grid(row=1, column=0)
 
-        self.newbutton = Button(self.frame, text='New...', command=self.notyet)
+        self.newbutton = tk.Button(self.frame, text='New...', command=self.notyet)
         self.newbutton.grid(row=1, column=1)
 
     def notyet(self):
@@ -35,7 +35,7 @@ class App:
         n = newflow.NewFlowDialog(self.root)
 
     def makemenu(self, frame):
-        self.menubar = Frame(frame, relief=FLAT, bd=0)
+        self.menubar = tk.Frame(frame, relief=tk.FLAT, bd=0)
         self.menubar.grid(row=0, column=0)
 
         self.filemenu = menu.make_menu('File', self.menubar,
@@ -49,6 +49,6 @@ class App:
 
 
 
-root = Tk()
+root = tk.Tk()
 app = App(root)
 root.mainloop()
