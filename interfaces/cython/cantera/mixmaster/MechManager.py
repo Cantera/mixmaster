@@ -1,17 +1,18 @@
 # This file is part of Cantera. See License.txt in the top-level directory or
 # at http://www.cantera.org/license.txt for license and copyright information.
 
-import sys
 import os
-from cantera import *
+import sys
+
+import cantera as ct
 from .ControlPanel import ControlWindow
 from .ControlPanel import make_menu, menuitem_state, add_menu_item
 #from Cantera.Examples.Tk import _mechdir
 
 if sys.version_info[0] == 3:
-    from tkinter import *
+    import tkinter as tk
 else:
-    from Tkinter import *
+    import Tkinter as tk
 
 # automatically-loaded mechanisms
 _autoload = [
@@ -25,13 +26,13 @@ def testit():
     pass
 
 
-class MechManager(Frame):
+class MechManager(tk.Frame):
     def __init__(self, master, app):
-        Frame.__init__(self, master)
+        tk.Frame.__init__(self, master)
         #self.config(relief=GROOVE, bd=4)
         self.app = app
         self.master = master
-        self.mechindx = IntVar()
+        self.mechindx = tk.IntVar()
         self.mechindx.set(1)
 
         #m = Label(self, text = 'Loaded Mechanisms')
@@ -47,7 +48,7 @@ class MechManager(Frame):
         #self.mlist.append([])
 
         self.mechmenu = make_menu('Mixtures', self, self.mlist)
-        self.mechmenu.grid(row=0, column=0, sticky=W)
+        self.mechmenu.grid(row=0, column=0, sticky=tk.W)
 
         self.mfr = None
 
@@ -59,7 +60,7 @@ class MechManager(Frame):
         self.mlist.append([])
 
         self.mechindx.set(il)
-        self.mechmenu.grid(row=0, column=0, sticky=W)
+        self.mechmenu.grid(row=0, column=0, sticky=tk.W)
 
     def delMechanism(self, mech):
         self.mechanisms.remove(mech)
