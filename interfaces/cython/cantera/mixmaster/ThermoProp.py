@@ -2,12 +2,13 @@
 # at http://www.cantera.org/license.txt for license and copyright information.
 
 import sys
+
 from .UnitChooser import UnitVar
 
 if sys.version_info[0] == 3:
-    from tkinter import *
+    import tkinter as tk
 else:
-    from Tkinter import *
+    import Tkinter as tk
 
 
 _tv = ['Temperature','Internal Energy','Enthalpy']
@@ -25,17 +26,17 @@ def badpair(a, b):
 
 class ThermoProp:
     def __init__(self, master, thermoframe, row, name, value, units, defaultunit=0):
-        self.value = DoubleVar()
+        self.value = tk.DoubleVar()
         self.thermoframe = thermoframe
         self.entry = UnitVar(master, units, defaultunit)
-        self.entry.grid(column=1, row=row, sticky=W)
-        self.entry.v.config(state=DISABLED, bg='lightgray')
-        self.checked = IntVar()
+        self.entry.grid(column=1, row=row, sticky=tk.W)
+        self.entry.v.config(state=tk.DISABLED, bg='lightgray')
+        self.checked = tk.IntVar()
         self.checked.set(0)
         self.name = name
-        self.c = Checkbutton(master, text=name, variable=self.checked,
-                             onvalue=1, offvalue=0, command=self.check)
-        self.c.grid(column=0, row=row, sticky=W+N)
+        self.c = tk.Checkbutton(master, text=name, variable=self.checked,
+                                onvalue=1, offvalue=0, command=self.check)
+        self.c.grid(column=0, row=row, sticky=tk.W + tk.N)
 
     def check(self):
         if self == self.thermoframe.last1:
@@ -58,9 +59,9 @@ class ThermoProp:
 
     def _check(self):
         if self.isChecked():
-            self.entry.v.config(state=NORMAL, bg='white')
+            self.entry.v.config(state=tk.NORMAL, bg='white')
         else:
-            self.entry.v.config(state=DISABLED, bg='lightgray')
+            self.entry.v.config(state=tk.DISABLED, bg='lightgray')
 
     def isChecked(self):
         return self.checked.get()
