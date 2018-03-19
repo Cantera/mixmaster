@@ -5,15 +5,15 @@ import re
 import sys
 
 if sys.version_info[0] == 3:
-    from tkinter import *
+    import tkinter as tk
 else:
-    from Tkinter import *
+    import Tkinter as tk
 
 
-class UnitVar(Frame):
+class UnitVar(tk.Frame):
     def __init__(self, master, unitmod, defaultunit=0):
-        Frame.__init__(self, master)
-        self.x = DoubleVar()
+        tk.Frame.__init__(self, master)
+        self.x = tk.DoubleVar()
         self.xsi = 0.0
         self.x.set(0.0)
         self.unitmod = unitmod
@@ -25,12 +25,12 @@ class UnitVar(Frame):
             for it in unitlist:
                 if it[0] != '_':
                     self.unitlist.append(it)
-        self.v = Entry(self, textvariable=self.x)
-        self.s = StringVar()
+        self.v = tk.Entry(self, textvariable=self.x)
+        self.s = tk.StringVar()
         tmp = re.sub('__', ' / ', self.unitlist[defaultunit])
         self.s.set(tmp)
         self.conv = eval('self.unitmod.' + re.sub(' / ', '__', self.s.get())).value
-        self.u = Label(self)
+        self.u = tk.Label(self)
         self.u.config(textvariable=self.s, fg='darkblue')
         self.u.bind('<Double-1>', self.select)
         self.u.bind('<Any-Enter>', self.highlight)
@@ -45,7 +45,7 @@ class UnitVar(Frame):
         self.u.config(fg='darkblue')
 
     def select(self, event):
-        self.new=Toplevel()
+        self.new = tk.Toplevel()
         self.new.title("Units")
         self.new.transient(self.master)
         self.new.bind("<Return>", self.finished, "+")
@@ -55,17 +55,16 @@ class UnitVar(Frame):
         for each in self.unitlist:
             if each[0] != '_' and each[:1] != '__' and each != 'SI':
                 each = re.sub('__', ' / ', each)
-                Radiobutton(self.new, text=each, variable=self.u['textvariable'],
-                            value=each,
-                            command=self.update,
-                            ).grid(column=c, row=r, sticky=W)
+                tk.Radiobutton(self.new, text=each, variable=self.u['textvariable'],
+                               value=each, command=self.update,
+                               ).grid(column=c, row=r, sticky=tk.W)
                 r += 1
-                if (r > 10):
+                if r > 10:
                     r = 0
                     c += 1
                     r += 1
 
-        b=Button(self.new, text='OK', command=self.finished, default=ACTIVE)
+        b = tk.Button(self.new, text='OK', command=self.finished, default=tk.ACTIVE)
         b.grid(column=c, row=r)
 
         self.new.grab_set()
