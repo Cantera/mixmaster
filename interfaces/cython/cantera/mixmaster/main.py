@@ -11,19 +11,9 @@
 _app_title = 'MixMaster'
 _app_version = '1.0'
 
-
-# functionality imports
 import sys
-if sys.version_info[0] == 3:
-    from tkinter import *
-    from tkinter import messagebox
-    from tkinter.filedialog import askopenfilename
-else:
-    from Tkinter import *
-    import tkMessageBox as messagebox
-    from tkFileDialog import askopenfilename
-
-import sys, os, string
+import os
+import string
 
 # Cantera imports
 from cantera import *
@@ -44,11 +34,116 @@ from .ControlPanel import ControlWindow
 from .ControlPanel import make_menu, menuitem_state
 from .Mix import Mix, Species
 
+# functionality imports
+if sys.version_info[0] == 3:
+    from tkinter import *
+    from tkinter import messagebox
+    from tkinter.filedialog import askopenfilename
+else:
+    from Tkinter import *
+    import tkMessageBox as messagebox
+    from tkFileDialog import askopenfilename
+
+
 def testit():
     return
 
 
 class MixMaster:
+    def __init__(self, master=None):
+        """
+        Create a new Application instance.
+        Usually this is only called once.
+        """
+        if master:
+            self.master = master
+        else:
+            t = Tk()
+            self.master = t
+
+        self._windows = {}
+        self._vis = {}
+        self.windows = []
+
+        self.cwin = ControlWindow(_app_title, self.master)
+        self.cwin.master.resizable(FALSE, FALSE)
+
+        self.menubar = Frame(self.cwin, relief=GROOVE, bd=2)
+        self.menubar.grid(row=0, column=0, sticky=N + W + E)
+
+        self.mixfr = None
+        self.thermo = None
+        self.transport = None
+        self.kinetics = None
+        self.rxndata = None
+        self.rxnpaths = None
+        self.edit = None
+        self.fname = None
+
+        self.mechframe = MechManager(self.cwin, self)
+        self.mechframe.grid(row=1, column=0, sticky=N + W)
+
+        fileitems = [('Load Mixture...', self.openmech),
+                     ('Import Mechanism File...', self.importfile),
+                     'separator',
+                     ('Load Data File...', self.showdata),
+                     'separator',
+                     ('Exit', self.stop),
+                     []
+                     ]
+        self.filemenu = make_menu('File', self.menubar, fileitems)
+
+        self.vtherm = IntVar()
+        self.vcomp = IntVar()
+        self.vtran = IntVar()
+        self.vkin = IntVar()
+        self.vrxn = IntVar()
+        self.vrxn.set(0)
+        self.vtherm.set(1)
+        self.vedit = IntVar()
+
+        dataitems = [(' Import Flame Data', testit),
+                     (' Import CSV Data', testit),
+                     []]
+        # self.datamenu = make_menu('Data', self.menubar, dataitems)
+
+        # toolitems = [(' Convert...', self.importfile),
+        #             []]
+        # self.toolmenu = make_menu('Tools', self.menubar, toolitems)
+
+        w = [(' Thermodynamic State', self.showthermo, 'check', self.vtherm),
+             (' Composition', self.showcomp, 'check', self.vcomp),
+             'separator',
+             (' Kinetics', self.showkinetics, 'check', self.vkin),
+             (' Reactions...', self.showrxns),
+             (' Reaction Paths...', self.showrpaths),
+             []]
+
+        self.viewmenu = make_menu('Windows', self.menubar, w)
+
+        self.helpmenu = make_menu('Help', self.menubar,
+                                  [('About ' + _app_title + '...', self.aboutmix),
+                                   ('About Cantera...', testit),
+                                   []
+
+                                   ])
+
+        # load the preloaded mechanisms
+        for m in _autoload:
+            self.loadmech(m[0], m[1], 0)
+
+        self.makeWindows()
+        self.addWindow('import', ImportFrame(self))
+
+        self.vtherm.set(1)
+        self.showthermo()
+        ##         self.vcomp.set(1)
+        ##         self.showcomp()
+
+        self.master.iconify()
+        self.master.update()
+        self.master.deiconify()
+        self.cwin.mainloop()
 
     def stop(self):
         sys.exit(0)
@@ -60,9 +155,7 @@ class MixMaster:
         if pathname:
             self.loadmech('', pathname)
 
-
     def loadmech(self, mechname, pathname, mw=1):
-
         p = os.path.normpath(os.path.dirname(pathname))
         self.fname = os.path.basename(pathname)
         ff = os.path.splitext(self.fname)
@@ -73,7 +166,7 @@ class MixMaster:
 
         except Exception as e:
             utilities.handleError('could not create gas mixture object: '
-                                  +ff[0]+'\n'+str(e))
+                                  + ff[0] + '\n' + str(e))
             self.mechname = 'Error'
             return
 
@@ -83,9 +176,8 @@ class MixMaster:
             mechname = self.mechname
 
         self.mechframe.addMechanism(mechname, self.mech)
-        if mw==1:
+        if mw == 1:
             self.makeWindows()
-
 
     def addWindow(self, name, w):
         """Add a new window, or replace an existing one."""
@@ -105,8 +197,6 @@ class MixMaster:
         else:
             self._windows[name].show()
 
-
-
     def update(self):
         """Update all windows to reflect the current mixture state."""
         for w in self._windows.keys():
@@ -119,8 +209,6 @@ class MixMaster:
         self.thermo.showState()
         self.mixfr.show()
 
-
-
     def makeMix(self):
         self.mix = Mix(self.mech)
         nsp = self.mech.n_species
@@ -132,116 +220,12 @@ class MixMaster:
 
         x = self.mech.X
         self.mix.setMoles(x)
-        self.mix.set(temperature = self.mech.T,
-                     pressure = self.mech.P)
-
-
-
-    def __init__(self, master=None):
-        """
-        Create a new Application instance.
-        Usually this is only called once.
-        """
-        if master:
-            self.master = master
-        else:
-            t = Tk()
-            self.master = t
-
-        self._windows = {}
-        self._vis = {}
-        self.windows = []
-
-        self.cwin = ControlWindow(_app_title,self.master)
-        self.cwin.master.resizable(FALSE,FALSE)
-
-        self.menubar = Frame(self.cwin, relief=GROOVE,bd=2)
-        self.menubar.grid(row=0,column=0,sticky=N+W+E)
-
-        self.mixfr = None
-        self.thermo = None
-        self.transport = None
-        self.kinetics = None
-        self.rxndata = None
-        self.rxnpaths = None
-        self.edit = None
-        self.fname = None
-
-        self.mechframe = MechManager(self.cwin, self)
-        self.mechframe.grid(row=1,column=0,sticky=N+W)
-
-        fileitems = [('Load Mixture...', self.openmech),
-                     ('Import Mechanism File...',self.importfile),
-                     'separator',
-                     ('Load Data File...',self.showdata),
-                     'separator',
-                     ('Exit', self.stop),
-                     []
-                     ]
-        self.filemenu = make_menu('File', self.menubar, fileitems)
-
-
-        self.vtherm = IntVar()
-        self.vcomp = IntVar()
-        self.vtran = IntVar()
-        self.vkin = IntVar()
-        self.vrxn = IntVar()
-        self.vrxn.set(0)
-        self.vtherm.set(1)
-        self.vedit = IntVar()
-
-
-        dataitems = [(' Import Flame Data', testit),
-                     (' Import CSV Data', testit),
-                     []]
-        #self.datamenu = make_menu('Data', self.menubar, dataitems)
-
-
-        #toolitems = [(' Convert...', self.importfile),
-        #             []]
-        #self.toolmenu = make_menu('Tools', self.menubar, toolitems)
-
-
-        w = [(' Thermodynamic State', self.showthermo, 'check', self.vtherm),
-             (' Composition', self.showcomp, 'check', self.vcomp),
-             'separator',
-             (' Kinetics', self.showkinetics, 'check', self.vkin),
-             (' Reactions...', self.showrxns),
-             (' Reaction Paths...', self.showrpaths),
-             []]
-
-        self.viewmenu = make_menu('Windows', self.menubar, w)
-
-        self.helpmenu = make_menu('Help', self.menubar,
-                                  [('About '+_app_title+'...', self.aboutmix),
-                                   ('About Cantera...', testit),
-                                   []
-
-                                   ])
-
-        # load the preloaded mechanisms
-        for m in _autoload:
-            self.loadmech(m[0],m[1],0)
-
-        self.makeWindows()
-        self.addWindow('import',ImportFrame(self))
-
-        self.vtherm.set(1)
-        self.showthermo()
-##         self.vcomp.set(1)
-##         self.showcomp()
-
-        self.master.iconify()
-        self.master.update()
-        self.master.deiconify()
-        self.cwin.mainloop()
-
+        self.mix.set(temperature=self.mech.T, pressure=self.mech.P)
 
     def importfile(self):
         #self.vimport.set(1)
         w = self._windows['import']
         w.show()
-
 
     def makeWindows(self):
 #        if self.mixfr:
@@ -259,16 +243,13 @@ class MixMaster:
 #        self.transport = TransportFrame(self.cwin, self)
         self.kinetics = SpeciesKineticsFrame(self.cwin, self)
 
-        self.addWindow('rxndata',ReactionKineticsFrame(self.vrxn, self))
-        self.addWindow('rxnpaths',ReactionPathFrame(self))
-        self.addWindow('dataset',DataFrame(None, self))
-
+        self.addWindow('rxndata', ReactionKineticsFrame(self.vrxn, self))
+        self.addWindow('rxnpaths', ReactionPathFrame(self))
+        self.addWindow('dataset', DataFrame(None, self))
 
         #self.edit = EditFrame(t, self)
 
-        self.windows = [self.mixfr,
-                        self.thermo, self.transport,
-                        self.kinetics]
+        self.windows = [self.mixfr, self.thermo, self.transport, self.kinetics]
 
         self.showthermo()
         self.showcomp()
@@ -279,14 +260,14 @@ class MixMaster:
         #self.showdata()
 
         if self.mech:
-            self.mechframe.grid(row=1,column=0)
+            self.mechframe.grid(row=1, column=0)
         else:
             self.mechframe.grid_forget()
         #self.showedit()
 
     def show(self, frame, vis, row, col):
         if vis:
-            frame.grid(row=row,column=col,sticky=N+E+S+W)
+            frame.grid(row=row, column=col, sticky=N+E+S+W)
         else:
             frame.grid_forget()
 
@@ -312,22 +293,20 @@ class MixMaster:
         self._windows['dataset'].browseForDatafile()
 
     def aboutmix(self):
-
-        m = messagebox.showinfo(title = 'About MixMaster',
-                                message = """
+        message_string = """
                      MixMaster
 
-                    version """+_app_version+"""
+                    version """ + _app_version + """
 
-written by:
+        written by:
 
-Prof. David G. Goodwin
-California Institute of Technology
+        Prof. David G. Goodwin
+        California Institute of Technology
 
-copyright 2003
-California Institute of Technology
-     """)
-
+        copyright 2003
+        California Institute of Technology
+        """
+        m = messagebox.showinfo(title='About MixMaster', message=message_string)
 
 
 if __name__ == "__main__":
