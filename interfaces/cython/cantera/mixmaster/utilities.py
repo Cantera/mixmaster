@@ -1,25 +1,25 @@
 # This file is part of Cantera. See License.txt in the top-level directory or
 # at http://www.cantera.org/license.txt for license and copyright information.
 
+import traceback
+import types
 import os
 import string
 import sys
-import types
-import traceback
 
 try:
     if sys.version_info[0] == 3:
-        from tkinter import Tk
+        import tkinter as tk
         from tkinter import messagebox
     else:
-        from Tkinter import Tk
+        import Tkinter as tk
         import tkMessageBox as messagebox
     _hasTk = 1
 except:
     _hasTk = 0
 
 
-def write_CSV(f,x):
+def write_CSV(f, x):
     """write list x to file f in comma-separated-value format."""
     for e in x:
         f.write(repr(e) + ',')
@@ -39,4 +39,4 @@ def handleError(message='<error>', window=None, fatal=0, warning=0, options=None
     if warning:
         messagebox.showwarning(title='Warning', message=message, parent=window)
     else:
-        m = messagebox.showerror(title='Error', message=message,parent=window)
+        m = messagebox.showerror(title='Error', message=message, parent=window)
