@@ -1,24 +1,24 @@
 # This file is part of Cantera. See License.txt in the top-level directory or
 # at http://www.cantera.org/license.txt for license and copyright information.
 
-import os
 import math
+import os
 import string
 import sys
 
-if sys.version_info[0] == 3:
-    from tkinter import *
-    from tkinter.filedialog import askopenfilename
-else:
-    from Tkinter import *
-    from tkFileDialog import askopenfilename
-
 from cantera import *
 import numpy as np
+
 from .GraphFrame import Graph
 from .DataGraph import DataGraph, plotLimits
 from .ControlPanel import make_menu
 
+if sys.version_info[0] == 3:
+    import tkinter as tk
+    from tkinter.filedialog import askopenfilename
+else:
+    import Tkinter as tk
+    from tkFileDialog import askopenfilename
 
 U_LOC = 1
 V_LOC = 2
@@ -31,17 +31,17 @@ def testit(e=None):
     pass
 
 
-class DataFrame(Frame):
+class DataFrame(tk.Frame):
     def __init__(self, master, top):
-#           if master==None:
-        self.master = Toplevel()
+        #if master == None:
+        self.master = tk.Toplevel()
         self.master.protocol("WM_DELETE_WINDOW", self.hide)
         #else:
-        #           self.master = master
+            #self.master = master
 
         #self.vis = vis
-        Frame.__init__(self, self.master)
-        self.config(relief=GROOVE, bd=4)
+        tk.Frame.__init__(self, self.master)
+        self.config(relief=tk.GROOVE, bd=4)
         self.top = top
         self.mix = self.top.mix
         self.g = self.top.mix.g
@@ -52,21 +52,21 @@ class DataFrame(Frame):
         #self.pltwhat = None
         self.datasets = []
         self.vars = []
-        self.whichsoln = IntVar()
-        self.loc = IntVar()
+        self.whichsoln = tk.IntVar()
+        self.loc = tk.IntVar()
 #        self.loc.set(1)
         self.lastloc = T_LOC  # self.loc.get()
-        self.datafile = StringVar()
-        self.solnid = StringVar()
-        self.gr = Frame(self)
-        self.n = IntVar()
+        self.datafile = tk.StringVar()
+        self.solnid = tk.StringVar()
+        self.gr = tk.Frame(self)
+        self.n = tk.IntVar()
 
-        self.scframe = Frame(self)
-        self.sc = Scale(self.scframe, variable=self.n, orient='horizontal',
-                        digits=0, length=300, resolution=1,
-                        command=self.updateplot)
+        self.scframe = tk.Frame(self)
+        self.sc = tk.Scale(self.scframe, variable=self.n, orient='horizontal',
+                          digits=0, length=300, resolution=1,
+                          command=self.updateplot)
         self.sc.config(cnf={'from': 0, 'to': 1})
-        Label(self.scframe, text='Grid Point').grid(column=0, row=0)
+        tk.Label(self.scframe, text='Grid Point').grid(column=0, row=0)
         self.sc.grid(row=0, column=1)
         self.sc.bind('<ButtonRelease-1>', self.updateState)
         self.gr.grid(row=4, column=0, columnspan=10)
@@ -76,8 +76,9 @@ class DataFrame(Frame):
         self.hide()
 
     def makeMenu(self):
-        self.menubar = Frame(self, relief=GROOVE, bd=2)
-        self.menubar.grid(row=0, column=0, sticky=N+W+E, columnspan=10)
+        self.menubar = tk.Frame(self, relief=tk.GROOVE, bd=2)
+        self.menubar.grid(row=0, column=0, sticky=tk.N + tk.W + tk.E,
+                          columnspan=10)
         f = [('Open...', self.browseForDatafile)]
         #make_menu('File',self.menubar,items)
         make_menu('File', self.menubar, f)
@@ -315,7 +316,8 @@ class DataFrame(Frame):
             self.gdot = self.plt.plot(n, 'red')
 
     def updateplot(self, event=None):
-        if self.data == None: return
+        if self.data == None:
+            return
 
         if self.zdata == None:
             self.newplot()
