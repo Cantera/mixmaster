@@ -1,18 +1,17 @@
 # This file is part of Cantera. See License.txt in the top-level directory or
 # at http://www.cantera.org/license.txt for license and copyright information.
 
-from cantera import *
-
 import sys
+import os
+from cantera import *
+from .ControlPanel import ControlWindow
+from .ControlPanel import make_menu, menuitem_state, add_menu_item
+#from Cantera.Examples.Tk import _mechdir
+
 if sys.version_info[0] == 3:
     from tkinter import *
 else:
     from Tkinter import *
-
-from .ControlPanel import ControlWindow
-from .ControlPanel import make_menu, menuitem_state, add_menu_item
-#from Cantera.Examples.Tk import _mechdir
-import os
 
 # automatically-loaded mechanisms
 _autoload = [
@@ -21,13 +20,14 @@ _autoload = [
     (' H/O/Ar', 'h2o2.cti')
     ]
 
+
 def testit():
     pass
 
-class MechManager(Frame):
 
-    def __init__(self,master,app):
-        Frame.__init__(self,master)
+class MechManager(Frame):
+    def __init__(self, master, app):
+        Frame.__init__(self, master)
         #self.config(relief=GROOVE, bd=4)
         self.app = app
         self.master = master
@@ -36,10 +36,10 @@ class MechManager(Frame):
 
         #m = Label(self, text = 'Loaded Mechanisms')
         #m.grid(column=0,row=0)
-#         m.bind('<Double-1>',self.show)
-#         self.mechindx.set(0)
+        #m.bind('<Double-1>',self.show)
+        #self.mechindx.set(0)
         self.mechanisms = []
-        self.mlist = [ [] ]
+        self.mlist = [[]]
         i = 1
         #for m in self.mechanisms:
         #    self.mlist.append((m[0], self.setMechanism, 'check', self.mechindx, i))
@@ -47,7 +47,7 @@ class MechManager(Frame):
         #self.mlist.append([])
 
         self.mechmenu = make_menu('Mixtures', self, self.mlist)
-        self.mechmenu.grid(row=0,column=0,sticky=W)
+        self.mechmenu.grid(row=0, column=0, sticky=W)
 
         self.mfr = None
 
@@ -59,8 +59,7 @@ class MechManager(Frame):
         self.mlist.append([])
 
         self.mechindx.set(il)
-        self.mechmenu.grid(row=0,column=0,sticky=W)
-
+        self.mechmenu.grid(row=0, column=0, sticky=W)
 
     def delMechanism(self, mech):
         self.mechanisms.remove(mech)
@@ -82,9 +81,8 @@ class MechManager(Frame):
 ##             i += 1
 ##         print 'end'
 
-
     def setMechanism(self, event=None):
         i = self.mechindx.get()
-        self.app.mech = self.mechanisms[i-1][1]
+        self.app.mech = self.mechanisms[i - 1][1]
         self.app.makeMix()
         self.app.makeWindows()
