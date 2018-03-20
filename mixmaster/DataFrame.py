@@ -311,7 +311,7 @@ class DataFrame(tk.Frame):
                                  logscale=(0, ylog),
                                  pixelX=500, pixelY=400)
             self.plt.canvas.config(bg='white')
-            self.plt.grid(row=1, column=0, columnspan=2, sticky=W+E)
+            self.plt.grid(row=1, column=0, columnspan=2, sticky=tk.W + tk.E)
             n = self.n.get()
             self.gdot = self.plt.plot(n, 'red')
 

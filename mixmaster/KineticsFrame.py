@@ -351,7 +351,7 @@ class ReactionPathFrame(tk.Frame):
             i += 1
         fmtframe.grid(row=5, column=0, columnspan=10, sticky=tk.E + tk.W)
 
-        self.cv = Canvas(self, relief=tk.SUNKEN, bd=1)
+        self.cv = tk.Canvas(self, relief=tk.SUNKEN, bd=1)
         self.cv.grid(column=0, row=4, sticky=tk.W + tk.E + tk.N, columnspan=10)
 
         pframe = tk.Frame(self)

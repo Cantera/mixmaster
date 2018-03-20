@@ -4,7 +4,7 @@
 import sys
 import numpy as np
 
-from cantera import *
+import cantera as ct
 from SpeciesInfo import SpeciesInfo
 #from KineticsFrame import KineticsFrame
 
