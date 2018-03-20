@@ -78,7 +78,7 @@ class DataGraph(tk.Frame):
         self.graph_h = pixelY - 70
         self.origin = (100, 20)
         self.canvas = tk.Canvas(self, width=pixelX, height=pixelY,
-                             relief=tk.SUNKEN, bd=1)
+                                relief=tk.SUNKEN, bd=1)
         id = self.canvas.create_rectangle(self.origin[0], self.origin[1],
                                           pixelX-20, pixelY-50)
         self.canvas.grid(row=1, column=1, rowspan=2, sticky=tk.N + tk.S + tk.E + tk.W)
@@ -143,7 +143,7 @@ class DataGraph(tk.Frame):
         id = self.canvas.create_oval(xpt - 2, ypt - 2, xpt + 2, ypt + 2, fill=color)
         #self.writeValue(y)
         s = '(%g, %g)' % (self.data[self.ix, n], self.data[self.iy, n])
-        if n > 0 and self.data[self.iy, n] > self.data[self.iy, n-1]:
+        if n > 0 and self.data[self.iy, n] > self.data[self.iy, n - 1]:
             idt = self.canvas.create_text(xpt + 5, ypt + 5, text=s, anchor=tk.NW)
         else:
             idt = self.canvas.create_text(xpt + 5, ypt - 5, text=s, anchor=tk.SW)
@@ -154,7 +154,7 @@ class DataGraph(tk.Frame):
         npts = len(self.xdata)
         for n in range(1, npts):
             self.canvas.create_line(self.xdata[n-1], self.ydata[n-1],
-                            self.xdata[n], self.ydata[n], fill=color)
+                                    self.xdata[n], self.ydata[n], fill=color)
 
     def addLabel(self, y, orient=0):
         if orient == 0:
