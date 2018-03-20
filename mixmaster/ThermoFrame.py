@@ -5,10 +5,10 @@ import sys
 
 import cantera as ct
 
-from .Units import temperature, pressure, density, specificEnergy, specificEntropy
-from .UnitChooser import UnitVar
-from .ThermoProp import ThermoProp
-from .utilities import handleError
+from Units import temperature, pressure, density, specificEnergy, specificEntropy
+from UnitChooser import UnitVar
+from ThermoProp import ThermoProp
+from utilities import handleError
 
 if sys.version_info[0] == 3:
     import tkinter as tk

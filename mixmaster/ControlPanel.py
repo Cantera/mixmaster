@@ -104,7 +104,7 @@ def testevent(event):
 
 def make_menu(name, menubar, lst):
     nc = len(name)
-    button=Menubutton(menubar, text=name, width=nc + 4, padx=3, pady=1)
+    button = tk.Menubutton(menubar, text=name, width=nc + 4, padx=3, pady=1)
     button.pack(side=tk.LEFT)
     menu = tk.Menu(button, tearoff=tk.FALSE)
     for entry in lst:

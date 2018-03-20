@@ -9,7 +9,7 @@ import sys
 import webbrowser
 
 import cantera as ct
-from .SpeciesInfo import SpeciesInfo
+from SpeciesInfo import SpeciesInfo
 
 if sys.version_info[0] == 3:
     import tkinter as tk

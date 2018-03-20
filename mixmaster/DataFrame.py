@@ -9,9 +9,9 @@ import sys
 from cantera import *
 import numpy as np
 
-from .GraphFrame import Graph
-from .DataGraph import DataGraph, plotLimits
-from .ControlPanel import make_menu
+from GraphFrame import Graph
+from DataGraph import DataGraph, plotLimits
+from ControlPanel import make_menu
 
 if sys.version_info[0] == 3:
     import tkinter as tk

@@ -16,19 +16,19 @@ import string
 import cantera as ct
 
 # local imports
-from . import utilities
-from .TransportFrame import TransportFrame
-from .CompositionFrame import MixtureFrame
-from .ThermoFrame import ThermoFrame
-from .ImportFrame import ImportFrame
-from .DataFrame import DataFrame
-from .KineticsFrame import SpeciesKineticsFrame, ReactionKineticsFrame, ReactionPathFrame
+import utilities
+from TransportFrame import TransportFrame
+from CompositionFrame import MixtureFrame
+from ThermoFrame import ThermoFrame
+from ImportFrame import ImportFrame
+from DataFrame import DataFrame
+from KineticsFrame import SpeciesKineticsFrame, ReactionKineticsFrame, ReactionPathFrame
 #from Edit import EditFrame
-from .MechManager import MechManager, _autoload
-from .UnitChooser import UnitVar
-from .ControlPanel import ControlWindow
-from .ControlPanel import make_menu, menuitem_state
-from .Mix import Mix, Species
+from MechManager import MechManager, _autoload
+from UnitChooser import UnitVar
+from ControlPanel import ControlWindow
+from ControlPanel import make_menu, menuitem_state
+from Mix import Mix, Species
 
 # functionality imports
 if sys.version_info[0] == 3:

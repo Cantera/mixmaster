@@ -3,7 +3,7 @@
 
 import sys
 
-from .UnitChooser import UnitVar
+from UnitChooser import UnitVar
 
 if sys.version_info[0] == 3:
     import tkinter as tk

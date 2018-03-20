@@ -3,7 +3,7 @@
 
 import numpy as np
 import cantera as ct
-from .utilities import handleError
+from utilities import handleError
 
 
 def spdict(phase, x):

@@ -6,9 +6,9 @@ import sys
 import re
 
 import cantera as ct
-from .Units import temperature, specificEnergy, specificEntropy
-from .UnitChooser import UnitVar
-from .GraphFrame import Graph
+from Units import temperature, specificEnergy, specificEntropy
+from UnitChooser import UnitVar
+from GraphFrame import Graph
 
 if sys.version_info[0] == 3:
     import tkinter as tk

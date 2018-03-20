@@ -5,7 +5,7 @@ import sys
 import numpy as np
 
 from cantera import *
-from .SpeciesInfo import SpeciesInfo
+from SpeciesInfo import SpeciesInfo
 #from KineticsFrame import KineticsFrame
 
 if sys.version_info[0] == 3:
