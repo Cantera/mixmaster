@@ -9,11 +9,11 @@ if sys.version_info[0] == 3:
 else:
     from Tkinter import *
 
-from .ElementFrame import getElements
-from .utilities import handleError
+from ElementFrame import getElements
+from utilities import handleError
 from cantera import *
-from .config import *
-from .SpeciesFrame import getSpecies
+from config import *
+from SpeciesFrame import getSpecies
 
 def testit():
     pass

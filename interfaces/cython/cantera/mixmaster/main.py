@@ -28,21 +28,21 @@ import sys, os, string
 # Cantera imports
 from cantera import *
 from numpy import zeros
-from . import utilities
+import utilities
 
 # local imports
-from .TransportFrame import TransportFrame
-from .CompositionFrame import MixtureFrame
-from .ThermoFrame import ThermoFrame
-from .ImportFrame import ImportFrame
-from .DataFrame import DataFrame
-from .KineticsFrame import SpeciesKineticsFrame, ReactionKineticsFrame, ReactionPathFrame
+from TransportFrame import TransportFrame
+from CompositionFrame import MixtureFrame
+from ThermoFrame import ThermoFrame
+from ImportFrame import ImportFrame
+from DataFrame import DataFrame
+from KineticsFrame import SpeciesKineticsFrame, ReactionKineticsFrame, ReactionPathFrame
 #from Edit import EditFrame
-from .MechManager import MechManager, _autoload
-from .UnitChooser import UnitVar
-from .ControlPanel import ControlWindow
-from .ControlPanel import make_menu, menuitem_state
-from .Mix import Mix, Species
+from MechManager import MechManager, _autoload
+from UnitChooser import UnitVar
+from ControlPanel import ControlWindow
+from ControlPanel import make_menu, menuitem_state
+from Mix import Mix, Species
 
 def testit():
     return

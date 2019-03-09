@@ -9,8 +9,8 @@ if sys.version_info[0] == 3:
 else:
     from Tkinter import *
 
-from .ControlPanel import ControlWindow
-from .ControlPanel import make_menu, menuitem_state, add_menu_item
+from ControlPanel import ControlWindow
+from ControlPanel import make_menu, menuitem_state, add_menu_item
 #from Cantera.Examples.Tk import _mechdir
 import os
 

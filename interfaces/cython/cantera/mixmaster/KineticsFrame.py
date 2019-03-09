@@ -12,7 +12,7 @@ else:
 
 from cantera import *
 
-from .SpeciesInfo import SpeciesInfo
+from SpeciesInfo import SpeciesInfo
 import webbrowser
 
 _CUTOFF = 1.e-15

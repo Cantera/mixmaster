@@ -7,7 +7,7 @@ if sys.version_info[0] == 3:
 else:
     from Tkinter import *
 
-from .UnitChooser import UnitVar
+from UnitChooser import UnitVar
 
 _tv = ['Temperature','Internal Energy','Enthalpy']
 _pv = ['Pressure', 'Density']

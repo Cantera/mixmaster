@@ -3,7 +3,7 @@
 
 from cantera import gas_constant
 from numpy import zeros, ones
-from .utilities import handleError
+from utilities import handleError
 
 def spdict(phase, x):
     nm = phase.speciesNames()

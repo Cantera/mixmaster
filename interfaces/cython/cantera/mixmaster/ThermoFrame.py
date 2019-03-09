@@ -9,10 +9,10 @@ if sys.version_info[0] == 3:
 else:
     from Tkinter import *
 
-from .Units import temperature, pressure, density, specificEnergy, specificEntropy
-from .UnitChooser import UnitVar
-from .ThermoProp import ThermoProp
-from .utilities import handleError
+from Units import temperature, pressure, density, specificEnergy, specificEntropy
+from UnitChooser import UnitVar
+from ThermoProp import ThermoProp
+from utilities import handleError
 
 _PRESSURE = 1
 _TEMPERATURE = 0
