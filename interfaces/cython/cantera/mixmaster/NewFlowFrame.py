@@ -9,7 +9,7 @@ if sys.version_info[0] == 3:
 else:
     from Tkinter import *
 
-from .SpeciesInfo import SpeciesInfo
+from SpeciesInfo import SpeciesInfo
 
 _CUTOFF = 1.e-15
 _ATOL = 1.e-15

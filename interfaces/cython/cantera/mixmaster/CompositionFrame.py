@@ -11,7 +11,7 @@ else:
 from cantera import *
 import numpy as np
 
-from .SpeciesInfo import SpeciesInfo
+from SpeciesInfo import SpeciesInfo
 #from KineticsFrame import KineticsFrame
 
 _CUTOFF = 1.e-15
