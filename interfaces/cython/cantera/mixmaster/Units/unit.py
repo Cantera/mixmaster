@@ -11,7 +11,6 @@ class unit(object):
     def __init__(self, value, derivation):
         self.value = value
         self.derivation = derivation
-        return
 
 
     def __add__(self, other):
@@ -29,7 +28,7 @@ class unit(object):
 
 
     def __mul__(self, other):
-        if type(other) == type(0) or type(other) == type(0.0):
+        if type(other) == type(int()) or type(other) == type(float()):
             return unit(other*self.value, self.derivation)
 
         value = self.value * other.value
@@ -41,7 +40,7 @@ class unit(object):
         return self.__truediv__(other)
 
     def __truediv__(self, other):
-        if type(other) == type(0) or type(other) == type(0.0):
+        if type(other) == type(int()) or type(other) == type(float()):
             return unit(self.value/other, self.derivation)
 
         value = self.value / other.value
@@ -51,8 +50,8 @@ class unit(object):
 
 
     def __pow__(self, other):
-        if type(other) != type(0) and type(other) != type(0.0):
-            raise BadOperation
+        if type(other) != type(int()) and type(other) != type(float()):
+            raise BadOperation(self, other)
 
         value = self.value ** other
         derivation = tuple(map(operator.mul, [other]*7, self.derivation))
@@ -82,7 +81,7 @@ class unit(object):
         return self.__rtruediv__(other)
 
     def __rtruediv__(self, other):
-        if type(other) != type(0) and type(other) != type(0.0):
+        if type(other) != type(int()) and type(other) != type(float()):
             raise BadOperation(self, other)
 
         value = other/self.value
@@ -103,9 +102,9 @@ class unit(object):
             exponent = self.derivation[i]
             if exponent == 0: continue
             if exponent == 1:
-                str += " %s" % (self._labels[i])
+                str += " " + "%s" % (self._labels[i])
             else:
-                str += " %s^%d" % (self._labels[i], exponent)
+                str += " " + "%s^%d" % (self._labels[i], exponent)
 
         return str
 
