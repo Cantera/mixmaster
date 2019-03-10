@@ -69,7 +69,14 @@ class UnitVar(Frame):
         b=Button(self.new,text='OK',command=self.finished, default=ACTIVE)
         b.grid(column=c, row=r)
 
-        self.new.grab_set()
+        while 1: 
+            try: 
+                self.new.grab_set() 
+                break 
+            except TclError: 
+                sys.exc_traceback = None 
+                self.new.after(100)
+
         self.new.focus_set()
         self.new.wait_window()
 
