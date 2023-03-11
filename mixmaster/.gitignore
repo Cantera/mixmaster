@@ -1,0 +1,10 @@
+#Python compiled files
+*pyc
+
+#Ignore reaction path diagrams
+*.gif
+*.svg
+*.png
+*.html
+*.dot
+*.jpg
