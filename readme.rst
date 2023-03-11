@@ -25,3 +25,8 @@ MixMaster is written in Python.
 Installation
 ============
 
+
+Development
+===========
+The ControlWindow class seems to be something that could replace the menu.py file. Either that or the menu.py file is trying to remove some of the responsibility from the
+ControlWindow class. I'm not sure which one it is currently.

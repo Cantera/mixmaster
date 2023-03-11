@@ -175,8 +175,8 @@ class EditFrame(tk.Frame):
         nm.insert(tk.END, text)
 
     def chooseElements(self):
-        oldel = self.mix.g.elementNames()
-        newel = getElements(self.mix.g.elementNames())
+        oldel = self.solution.elementNames()
+        newel = getElements(self.mix.solution.elementNames())
         removeList = []
         for el in oldel:
             if not el in newel:

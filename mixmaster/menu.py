@@ -9,11 +9,11 @@ else:
     import Tkinter as tk
 
 
-def make_menu(name, menubar, lst):
-    button = tk.Menubutton(menubar, text=name, padx=3, pady=1)
+def make_menu(name, menu_bar, menu_items):
+    button = tk.Menubutton(menu_bar, text=name, padx=3, pady=1)
     button.pack(side=tk.LEFT, anchor=tk.W)
     menu = tk.Menu(button, tearoff=tk.FALSE)
-    for entry in lst:
+    for entry in menu_items:
         if entry == 'separator':
             menu.add_separator({})
         elif isinstance(entry, list):

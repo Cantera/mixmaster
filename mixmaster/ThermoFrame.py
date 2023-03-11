@@ -97,19 +97,19 @@ class ThermoFrame(tk.Frame):
             self.prop[1].check()
 
     def showState(self):
-        self.prop[_TEMPERATURE].set(self.mix.g.T)
-        self.prop[_PRESSURE].set(self.mix.g.P)
-        self.prop[_DENSITY].set(self.mix.g.density)
-        self.prop[_INTENERGY].set(self.mix.g.int_energy_mass)
-        self.prop[_ENTHALPY].set(self.mix.g.enthalpy_mass)
-        self.prop[_ENTROPY].set(self.mix.g.entropy_mass)
+        self.prop[_TEMPERATURE].set(self.mix.solution.T)
+        self.prop[_PRESSURE].set(self.mix.solution.P)
+        self.prop[_DENSITY].set(self.mix.solution.density)
+        self.prop[_INTENERGY].set(self.mix.solution.int_energy_mass)
+        self.prop[_ENTHALPY].set(self.mix.solution.enthalpy_mass)
+        self.prop[_ENTROPY].set(self.mix.solution.entropy_mass)
 
     def setState(self, event=None):
         if event:
             self.warn = 0
         else:
             self.warn = 1
-        self.top.mixfr.update()
+        self.top.mixture_frame.update()
         i = self.equil.get()
         optlist = ['frozen', 'equilibrium']
         opt = [optlist[i]]

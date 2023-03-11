@@ -22,10 +22,6 @@ _autoload = [
     ]
 
 
-def testit():
-    pass
-
-
 class MechManager(tk.Frame):
     def __init__(self, master, app):
         tk.Frame.__init__(self, master)
@@ -85,5 +81,5 @@ class MechManager(tk.Frame):
     def setMechanism(self, event=None):
         i = self.mechindx.get()
         self.app.mech = self.mechanisms[i - 1][1]
-        self.app.makeMix()
-        self.app.makeWindows()
+        self.app.make_mixture()
+        self.app.make_windows()

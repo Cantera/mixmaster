@@ -67,21 +67,21 @@ class KineticsFrame(tk.Frame):
         mf.active = self
         c = self.comp.get()
         mix = self.top.mix
-        g = mix.g
+        g = mix.solution
         if c == 0:
             mf.var.set('Creation Rates')
-            #mf.data = spdict(mix.g, mix.moles())
+            #mf.data = species_dict(mix.solution, mix.moles())
             mf.comp = g.creation_rates
 
         elif c == 1:
             mf.var.set('Destruction Rates')
-            #mf.data = spdict(mix.g,mix.mass())
+            #mf.data = species_dict(mix.solution,mix.mass())
             mf.comp = g.destruction_rates
 
         elif c == 2:
             mf.var.set('Net Production Rates')
             mf.comp = g.net_production_rates
-            #mf.data = spdict(mix,mix,mf.comp)
+            #mf.data = species_dict(mix,mix,mf.comp)
 
         for s in mf.variable.keys():
             try:
@@ -100,7 +100,7 @@ class SpeciesKineticsFrame(tk.Frame):
         self.config(relief=tk.GROOVE, bd=4)
         self.top = top
         self.top.kinetics = self
-        self.g = self.top.mix.g
+        self.g = self.top.mix.solution
         self.entries = tk.Frame(self)
         self.var = tk.StringVar()
         self.var.set("Net Production Rates")
@@ -113,13 +113,13 @@ class SpeciesKineticsFrame(tk.Frame):
         self.ctype = 0
 
     def makeControls(self):
-        self.c = KineticsFrame(self)
+        self.kinetics_frame = KineticsFrame(self)
         #self.rr = ReactionKineticsFrame(self, self.top)
-        self.c.grid(column=1, row=0, sticky=tk.E + tk.W + tk.N + tk.S)
+        self.kinetics_frame.grid(column=1, row=0, sticky=tk.E + tk.W + tk.N + tk.S)
         #self.rr.grid(column=0, row=1, sticky=E+W+N+S)
 
     def show(self):
-        self.c.show()
+        self.kinetics_frame.show()
 
     def redo(self):
         self.update()
@@ -128,15 +128,15 @@ class SpeciesKineticsFrame(tk.Frame):
         self.makeEntries()
 
     def minimize(self, Event=None):
-        self.c.hide.set(1)
+        self.kinetics_frame.hide.set(1)
         self.redo()
-        self.c.grid_forget()
+        self.kinetics_frame.grid_forget()
         self.entries.bind("<Double-1>", self.maximize)
 
     def maximize(self, Event=None):
-        self.c.hide.set(0)
+        self.kinetics_frame.hide.set(0)
         self.redo()
-        self.c.grid(column=1, row=0, sticky=tk.E + tk.W + tk.N + tk.S)
+        self.kinetics_frame.grid(column=1, row=0, sticky=tk.E + tk.W + tk.N + tk.S)
         self.entries.bind("<Double-1>", self.minimize)
 
     def up(self, x):
@@ -169,7 +169,7 @@ class SpeciesKineticsFrame(tk.Frame):
 
             spname = s.name
             val = self.comp[k]
-            if not self.c.hide.get() or val:
+            if not self.kinetics_frame.hide.get() or val:
                 showit = 1
             else:
                 showit = 0
@@ -197,7 +197,7 @@ class ReactionKineticsFrame(tk.Frame):
         tk.Frame.__init__(self, self.master)
         self.config(relief=tk.GROOVE, bd=4)
         self.top = top
-        self.g = self.top.mix.g
+        self.g = self.top.mix.solution
         nr = self.g.n_reactions
         self.eqs = tk.Text(self, width=40, height=30)
         self.data = []
@@ -290,14 +290,13 @@ class ReactionPathFrame(tk.Frame):
     def __init__(self, top):
         self.master = tk.Toplevel()
         self.master.protocol("WM_DELETE_WINDOW", self.hide)
-        # self.vis = vis
         tk.Frame.__init__(self, self.master)
         self.config(relief=tk.GROOVE, bd=4)
         self.grid(column=0, row=0)
         self.top = top
-        self.g = self.top.mix.g
-        self.el = tk.IntVar()
-        self.el.set(0)
+        self.solution = self.top.mix.solution
+        self.element = tk.IntVar()
+        self.element.set(0)
         self.thresh = tk.DoubleVar()
 
         scframe = tk.Frame(self)
@@ -309,14 +308,14 @@ class ReactionPathFrame(tk.Frame):
         self.sc.bind('<ButtonRelease-1>', self.show)
         scframe.grid(row=3, column=0, columnspan=10)
 
-        enames = self.g.element_names
-        self.nel = len(enames)
+        element_names = self.solution.element_names
+        self.num_elements = len(element_names)
 
         i = 1
         eframe = tk.Frame(self)
         tk.Label(eframe, text='Element').grid(column=0, row=0, sticky=tk.W)
-        for e in enames:
-            tk.Radiobutton(eframe, text=e, variable=self.el, value=i - 1,
+        for e in element_names:
+            tk.Radiobutton(eframe, text=e, variable=self.element, value=i - 1,
                            command=self.show).grid(column=i, row=0, sticky=tk.W)
             i += 1
         eframe.grid(row=0, column=0)
@@ -356,10 +355,11 @@ class ReactionPathFrame(tk.Frame):
 
         pframe = tk.Frame(self)
         pframe.config(relief=tk.GROOVE, bd=4)
-        self.dot = tk.StringVar()
-        self.dot.set('dot -Tgif rxnpath.dot > rxnpath.gif')
+        self.dot_command = tk.StringVar()
+        self.dot_command.set('dot {0} -Tgif -Gdpi=100 -Nshape="box" -o{1}'.format('reaction_path_diagram.dot', 'reaction_path_diagram.gif'))
         tk.Label(pframe, text='DOT command:').grid(column=0, row=0, sticky=tk.W)
-        tk.Entry(pframe, width=60, textvariable=self.dot).grid(column=0, row=1, sticky=tk.W)
+        tk.Entry(pframe, width=80, textvariable=self.dot_command).grid(column=0, row=1, sticky=tk.W)
+
         pframe.grid(row=6, column=0, columnspan=10, sticky=tk.E + tk.W)
 
         self.thresh.set(-2.0)
@@ -371,7 +371,7 @@ class ReactionPathFrame(tk.Frame):
 
     def show(self, e=None):
         self.master.deiconify()
-        el = self.g.element_name(self.el.get())
+        element_name = self.solution.element_name(self.element.get())
         det = False
         if self.detailed.get() == 1:
             det = True
@@ -379,29 +379,77 @@ class ReactionPathFrame(tk.Frame):
         if self.net.get() == 1:
             flow = 'NetFlow'
 
-        self.d = ct.ReactionPathDiagram(self.g, el)
-        self.d.arrow_width = -2
-        self.d.flow_type = flow
-        self.d.show_details = det
-        self.d.threshold = math.pow(10.0, self.thresh.get())
+        self.diagram = ct.ReactionPathDiagram(self.solution, element_name)
+
+        # Options for cantera:
+        self.diagram.font = 'CMU Serif Roman'
+        self.diagram.arrow_width = -2
+        self.diagram.flow_type = flow
+        self.diagram.show_details = det
+        self.diagram.scale=-1
+        self.diagram.threshold = math.pow(10.0, self.thresh.get())
         node = self.local.get()
         try:
-            k = self.g.species_index(node)
-            self.d.display_only(k)
+            k = self.solution.species_index(node)
+            self.diagram.display_only(k)
         except:
-            self.d.display_only(-1)
+            self.diagram.display_only(-1)
 
-        self.d.write_dot('rxnpath.dot')
+        #New formatting added from blogpost at: https://www.tilmanbremer.de/2017/06/tutorial-generating-reaction-path-diagrams-with-cantera-and-python/
+        # Define the filenames:
+        dot_file = 'reaction_path_diagram.dot'
+        modified_dot_file = 'reaction_path_diagram_modified.dot'
+        image_file = 'reaction_path_diagram'
+
+        # Write the dot-file first and the edit it later
+        self.diagram.write_dot(dot_file)
+        
+        # Open the just created dot file and make adjustments 
+        # The dot_file is opened and read, the adjustements are saved in the modified_dot_file:
+        with open(modified_dot_file, 'wt') as outfile:
+            with open(dot_file, 'rt') as infile:
+                for row in infile:
+                    # Remove the line with the label:
+                    if row.startswith(' label'):
+                        row = ""
+                    # Change lightness to zero, erase style command and replace setlinewidth with penwidth:
+                    row = row.replace(', 0.9"', ', 0.0"')
+                    row = row.replace('style="setlinewidth(', 'penwidth=')
+                    row = row.replace(')", arrowsize', ', arrowsize')
+                    # Find the lines with a color statement:
+                    if row.find('color="0.7, ') != -1:
+                        # Find the position of the saturation value:
+                        start = row.find('color="0.7, ')
+                        end = row.find(', 0.0"')
+                        saturation = float(row[start + 12:end])
+                        if saturation > 1:
+                            # The highest values are set to 0 (black):
+                            saturationnew = 0
+                        else:
+                            # All values between 0 and 1 are inverted:
+                            saturationnew = round(abs(saturation-1),2)
+                        # Switch positions between saturation and lightness:
+                        row = row.replace(', 0.0"', '"')
+                        row = row.replace('0.7, ', '0.7, 0.0, ')
+                        # Replace saturation value with new calculated one:
+                        try:
+                            row = row.replace(str(saturation), str(saturationnew))
+                        except NameError:
+                            pass
+                    # Write the adjusted row:
+                    outfile.write(row)
+        # Remove the temporary output file by renaming it
+        os.rename(modified_dot_file, dot_file)  
 
         if self.browser.get() == 1:
             fmt = self.fmt.get()
-            os.system('dot -T' + fmt + ' rxnpath.dot > rxnpath.' + fmt)
+            os.system('dot {0} -T{1} -Gdpi=100 -Nshape="box" -O -o{2}'.format(dot_file, fmt, image_file + fmt))
             if fmt == 'svg':
                 showsvg()
             elif fmt == 'png':
                 showpng()
             else:
-                path = 'file:///' + os.getcwd() + '/rxnpath.' + fmt
+                path = 'file:///' + os.getcwd() + '/' + image_file + '.' + fmt
                 webbrowser.open(path)
             try:
                 self.cv.delete(self.image)
@@ -409,14 +457,14 @@ class ReactionPathFrame(tk.Frame):
                 pass
             self.cv.configure(width=0, height=0)
         else:
-            os.system(self.dot.get())
+            os.system(self.dot_command.get())
             self.rp = None
             try:
                 self.cv.delete(self.image)
             except:
                 pass
             try:
-                self.rp = tk.PhotoImage(file='rxnpath.gif')
+                self.rp = tk.PhotoImage(file='reaction_path_diagram.gif')
                 self.cv.configure(width=self.rp.width(), height=self.rp.height())
                 self.image = self.cv.create_image(0, 0, anchor=tk.NW, image=self.rp)
             except:

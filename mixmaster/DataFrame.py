@@ -5,6 +5,7 @@ import math
 import os
 import string
 import sys
+import xml.etree.ElementTree as ET
 
 from cantera import *
 import numpy as np
@@ -32,19 +33,27 @@ def testit(e=None):
 
 
 class DataFrame(tk.Frame):
-    def __init__(self, master, top):
-        #if master == None:
-        self.master = tk.Toplevel()
-        self.master.protocol("WM_DELETE_WINDOW", self.hide)
-        #else:
-            #self.master = master
+    '''
+    The responsibility of this class is to display the simulation output from a 
+    user-provided file. Can a lot of this functionality leverage the yaml parsers
+    provided in cantera to reconstruct solution files for plotting purposes?
 
-        #self.vis = vis
+    Also, how much of the plotting capabilites here were written before matplotlib?
+    Can we just toss out all of this and embed matplotlib plots?
+    
+    '''
+    def __init__(self, master, top):
+        if master == None:
+            self.master = tk.Toplevel()
+            self.master.protocol("WM_DELETE_WINDOW", self.hide)
+        else:
+            self.master = master
+        
         tk.Frame.__init__(self, self.master)
         self.config(relief=tk.GROOVE, bd=4)
         self.top = top
         self.mix = self.top.mix
-        self.g = self.top.mix.g
+        self.g = self.top.mix.solution
         self.data = None
         self.zdata = None
         self.ydata = None
@@ -77,10 +86,8 @@ class DataFrame(tk.Frame):
 
     def makeMenu(self):
         self.menubar = tk.Frame(self, relief=tk.GROOVE, bd=2)
-        self.menubar.grid(row=0, column=0, sticky=tk.N + tk.W + tk.E,
-                          columnspan=10)
+        self.menubar.grid(row=0, column=0, sticky=tk.N + tk.W + tk.E, columnspan=10)
         f = [('Open...', self.browseForDatafile)]
-        #make_menu('File',self.menubar,items)
         make_menu('File', self.menubar, f)
         make_menu('Dataset', self.menubar, self.datasets)
         make_menu('Plot', self.menubar, self.vars)
@@ -99,14 +106,15 @@ class DataFrame(tk.Frame):
         ff = os.path.splitext(fname)
         self.datasets = []
         if len(ff) == 2 and (ff[1] == '.xml' or ff[1] == '.ctml'):
-            x = XML.XML_Node('root', src=self.datafile.get())
-            c = x.child('ctml')
-            self.solns = c.children('simulation')
+            #x = XML.XML_Node('root', src=self.datafile.get())
+            tree = ET.parse(self.datafile.get())
+            x = tree.getroot()
+            c = x.find('ctml')
+            self.solns = x.find('simulation')
             if len(self.solns) > 1:
                 i = 0
                 for soln in self.solns:
-                    self.datasets.append((soln['id'], self.pickSoln,
-                                          'check', self.whichsoln, i))
+                    self.datasets.append((soln['id'], self.pickSoln, 'check', self.whichsoln, i))
                     i += 1
             self.solnid.set(self.solns[-1]['id'])
             self.soln = self.solns[-1]
@@ -228,6 +236,7 @@ class DataFrame(tk.Frame):
                 k = self.g.species_index(t)
             except:
                 k = -1
+            print(f)
             v = XML.getFloatArray(f)
             if t == 'z' or t == 't':
                 self.data[0, :] = v
@@ -275,10 +284,9 @@ class DataFrame(tk.Frame):
         for k in range(self.nsp):
             self.y[k] = self.data[k+Y_LOC, n]
 
-        self.top.thermo.checkTPBoxes()
+        self.top.thermo_frame.checkTPBoxes()
         self.mix.setMass(self.y)
-        self.mix.set(temperature=self.data[T_LOC, n],
-                     pressure=self.data[P_LOC, n])
+        self.mix.set(temperature=self.data[T_LOC, n], pressure=self.data[P_LOC, n])
 
         self.top.update()
 

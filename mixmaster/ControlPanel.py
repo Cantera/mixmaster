@@ -16,16 +16,11 @@ else:
     from ScrolledText import ScrolledText
 
 
-def ff():
-    print(' hi ')
-
 
 class ControlWindow(tk.Frame):
-    fncs = [ff]*10
-
     def __init__(self, title, master=None):
-        self.app = master
         tk.Frame.__init__(self, master)
+        self.app = master
         self.grid(row=0, column=0, sticky=tk.E + tk.W + tk.N + tk.S)
         self.master.title(title)
 

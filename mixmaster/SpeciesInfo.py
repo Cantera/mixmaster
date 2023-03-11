@@ -7,7 +7,7 @@ import re
 
 import cantera as ct
 from Units import temperature, specificEnergy, specificEntropy
-from UnitChooser import UnitVar
+import UnitChooser 
 from GraphFrame import Graph
 
 if sys.version_info[0] == 3:
@@ -23,7 +23,7 @@ def testit():
 class SpeciesInfo(tk.Label):
     def __init__(self, master, phase=None, species=None, **opt):
         tk.Label.__init__(self, master, opt)
-        self.sp = species
+        self.specie = species
         self.phase = phase
         self.bind('<Double-1>', self.show)
         self.bind('<Button-3>', self.show)
@@ -33,12 +33,12 @@ class SpeciesInfo(tk.Label):
     def highlight(self, event=None):
         self.config(fg='yellow')
 
-    def nohighlight(self, event=None):
+    def nohighlight(self, event=None):             
         self.config(fg='darkblue')
 
     def show(self, event):
         self.new = tk.Toplevel()
-        self.new.title(self.sp.symbol)
+        self.new.title(self.specie.symbol)
         #self.new.transient(self.master)
         self.new.bind("<Return>", self.update, "+")
         self.cpr = 0.0
@@ -52,8 +52,8 @@ class SpeciesInfo(tk.Label):
         self.eframe.config(relief=tk.GROOVE, bd=4)
         self.eframe.grid(row=0, column=0, columnspan=10, sticky=tk.E + tk.W)
         r = 1
-        tk.Label(self.eframe, text='Atoms:').grid(row=0, column=0, sticky=tk.N + tk.W)
-        for el, c in self.sp.composition():
+        tk.Label(self.eframe, text='Atoms:').grid(row=0, column=0, sticky=tk.N + tk.W + tk.E)
+        for el, c in self.specie.composition:
             tk.Label(self.eframe, text=repr(int(c)) + ' ' + el).grid(row=0, column=r)
             r += 1
 
@@ -61,96 +61,94 @@ class SpeciesInfo(tk.Label):
         self.thermo = tk.Frame(self.new)
         self.thermo.config(relief=tk.GROOVE, bd=4)
         self.thermo.grid(row=1, column=0, columnspan=10, sticky=tk.N + tk.E + tk.W)
-        tk.Label(self.thermo, text='Standard Heat of Formation at 298 K: ').grid(row=0,
-                                                                                 column=0,
-                                                                                 sticky=tk.W)
-        tk.Label(self.thermo, text='%8.2f kJ/mol' % (self.sp.hf0 * 1.0e-6)).grid(row=0,
-                                                                                 column=1,
-                                                                                 sticky=tk.W)
+        
+        label_text = 'Standard Heat of Formation at 298 K: '
+        tk.Label(self.thermo, text=label_text).grid(row=0, column=0, sticky=tk.W)
+        
+        label_text = '%8.2f  kJ / mol' % (self.specie.hf0 * 1.0e-6)
+        tk.Label(self.thermo, text=label_text).grid(row=0, column=1, sticky=tk.W)
+
         tk.Label(self.thermo, text='Molar Mass: ').grid(row=1, column=0, sticky=tk.W)
-        tk.Label(self.thermo, text=self.sp.molecularWeight).grid(row=1, column=1, sticky=tk.W)
-        labels = ['Temperature', 'c_p', 'Enthalpy', 'Entropy']
+        label_text = '%8.2f  kg / kmol' % (self.specie.molecularWeight)
+        tk.Label(self.thermo, text=label_text).grid(row=1, column=1, sticky=tk.W)
+
+        labels = ['Temperature', 'Specific Heat(c_p)', 'Enthalpy', 'Entropy']
         units = [temperature, specificEntropy, specificEnergy, specificEntropy]
-        whichone = [0, 1, 1, 1]
+        which_one = [0, 1, 1, 1]
 
         r = 2
         self.prop = []
-        for prop in labels:
-            tk.Label(self.thermo, text=prop).grid(row=r, column=0, sticky=tk.W)
-            p = UnitVar(self.thermo, units[r - 2], whichone[r - 2])
+        for property in labels:
+            tk.Label(self.thermo, text=property).grid(row=r, column=0, sticky=tk.W)
+            p = UnitChooser.UnitVar(self.thermo, units[r - 2], which_one[r - 2])
             p.grid(row=r, column=1, sticky=tk.W)
-            p.v.config(state=tk.DISABLED, bg='lightgray')
+            p.state_variable_entry.config(state=tk.DISABLED, bg='lightgray')
             self.prop.append(p)
             r += 1
 
-        tmin = self.sp.minTemp
-        tmax = self.sp.maxTemp
-        cp = self.sp.cp_R(tmin)
-        hh = self.sp.enthalpy_RT(tmin)
-        ss = self.sp.entropy_R(tmin)
+        tmin = self.specie.minTemp
+        tmax = self.specie.maxTemp
+        cp = self.specie.cp_R(tmin)
+        enthalpy = self.specie.enthalpy_RT(tmin)
+        entropy = self.specie.entropy_R(tmin)
 
         self.prop[0].bind("<Any-Enter>", self.decouple)
         self.prop[0].bind("<Any-Leave>", self.update)
         self.prop[0].bind("<Key>", self.update)
-        self.prop[0].v.config(state=tk.NORMAL, bg='white')
+        self.prop[0].state_variable_entry.config(state=tk.NORMAL, bg='white')
         self.prop[0].set(300.0)
 
         self.graphs = tk.Frame(self.new)
         self.graphs.config(relief=tk.GROOVE, bd=4)
         self.graphs.grid(row=2, column=0, columnspan=10, sticky=tk.E + tk.W)
 
-        self.cpdata = []
-        self.hdata = []
-        self.sdata = []
-        t = tmin
-        n = int((tmax - tmin)/100.0)
-        while t <= tmax:
-            self.cpdata.append((t, self.sp.cp_R(t)))
-            self.hdata.append((t, self.sp.enthalpy_RT(t)))
-            self.sdata.append((t, self.sp.entropy_R(t)))
-            t += n
+        self.cp_data = []
+        self.enthalpy_data = []
+        self.entropy_data = []
+        T_start = tmin
+        delta_T = int((tmax - tmin)/100.0)
+        while T_start <= tmax:
+            self.cp_data.append((T_start, self.specie.cp_R(T_start)))
+            self.enthalpy_data.append((T_start, self.specie.enthalpy_RT(T_start)))
+            self.entropy_data.append((T_start, self.specie.entropy_R(T_start)))
+            T_start += delta_T
 
-        # specific heat
+        # specific heat plot
         tk.Label(self.graphs, text='c_p/R').grid(row=0, column=0, sticky=tk.W + tk.E)
-        ymin, ymax, dtick = self.plotLimits(self.cpdata)
-        self.cpg = Graph(self.graphs, '', tmin, tmax, ymin, ymax,
-                         pixelX=150, pixelY=150)
+        ymin, ymax, dtick = self.plotLimits(self.cp_data)
+        self.cpg = Graph(self.graphs, '', tmin, tmax, ymin, ymax, pixelX=150, pixelY=150)
         self.cpg.canvas.config(bg='white')
         self.cpg.grid(row=1, column=0, columnspan=2, sticky=tk.W + tk.E)
         self.ticks(ymin, ymax, dtick, tmin, tmax, self.cpg)
 
-        # enthalpy
+        # enthalpy plot
         tk.Label(self.graphs, text='enthalpy/RT').grid(row=0, column=3, sticky=tk.W + tk.E)
-        ymin, ymax, dtick = self.plotLimits(self.hdata)
-        self.hg = Graph(self.graphs, '', tmin, tmax, ymin, ymax,
-                        pixelX=150, pixelY=150)
+        ymin, ymax, dtick = self.plotLimits(self.enthalpy_data)
+        self.hg = Graph(self.graphs, '', tmin, tmax, ymin, ymax, pixelX=150, pixelY=150)
         self.hg.canvas.config(bg='white')
         self.hg.grid(row=1, column=3, columnspan=2, sticky=tk.W + tk.E)
         self.ticks(ymin, ymax, dtick, tmin, tmax, self.hg)
 
-        # entropy
+        # entropy plot
         tk.Label(self.graphs, text='entropy/R').grid(row=0, column=5, sticky=tk.W + tk.E)
-        ymin, ymax, dtick = self.plotLimits(self.sdata)
-        self.sg = Graph(self.graphs, '', tmin, tmax, ymin, ymax,
-                        pixelX=150, pixelY=150)
+        ymin, ymax, dtick = self.plotLimits(self.entropy_data)
+        self.sg = Graph(self.graphs, '', tmin, tmax, ymin, ymax, pixelX=150, pixelY=150)
         self.sg.canvas.config(bg='white')
         self.sg.grid(row=1, column=5, columnspan=2, sticky=tk.W + tk.E)
         self.ticks(ymin, ymax, dtick, tmin, tmax, self.sg)
 
-        n = int((tmax - tmin)/100.0)
-        t = tmin
-        self.cpp = []
 
-        for t, cp in self.cpdata:
+        self.cpp = []
+        for t, cp in self.cp_data:
             self.cpg.join([(t, cp, 'red')])
-        for t, h in self.hdata:
+        for t, h in self.enthalpy_data:
             self.hg.join([(t, h, 'green')])
-        for t, s in self.sdata:
+        for t, s in self.entropy_data:
             self.sg.join([(t, s, 'blue')])
 
         self.cpdot = self.cpg.plot(tmin, cp, 'red')
-        self.hdot = self.hg.plot(tmin, hh, 'green')
-        self.sdot = self.sg.plot(tmin, ss, 'blue')
+        self.hdot = self.hg.plot(tmin, enthalpy, 'green')
+        self.sdot = self.sg.plot(tmin, entropy, 'blue')
 
         b = tk.Button(self.new, text=' OK ', command=self.finished, default=tk.ACTIVE)
         #ed=Button(self.new,text='Edit',command=testit)
@@ -160,7 +158,7 @@ class SpeciesInfo(tk.Label):
         self.scfr = tk.Frame(self.new)
         self.scfr.config(relief=tk.GROOVE, bd=4)
         self.scfr.grid(row=3, column=0, columnspan=10, sticky=tk.N + tk.E + tk.W)
-        self.sc = tk.Scale(self.scfr, command=self.update, variable=self.prop[0].x,
+        self.sc = tk.Scale(self.scfr, command=self.update, variable=self.prop[0].state_variable_value,
                            orient='horizontal', digits=7, length=400)
         self.sc.config(cnf={'from': tmin, 'to': tmax})
         self.sc.bind('<Any-Enter>', self.couple)
@@ -174,19 +172,19 @@ class SpeciesInfo(tk.Label):
         self.sc.config(variable=d)
 
     def couple(self, event=None):
-        self.sc.config(variable=self.prop[0].x)
-        #self.update()
+        self.sc.config(variable=self.prop[0].state_variable_value)
+        self.update()
 
     def update(self, event=None):
         try:
             tmp = self.prop[0].get()
-            cnd = self.sp.cp_R(tmp)
+            cnd = self.specie.cp_R(tmp)
             cc = cnd * ct.gas_constant
             self.prop[1].set(cc)
-            hnd = self.sp.enthalpy_RT(tmp)
+            hnd = self.specie.enthalpy_RT(tmp)
             hh = hnd * tmp * ct.gas_constant
             self.prop[2].set(hh)
-            snd = self.sp.entropy_R(tmp)
+            snd = self.specie.entropy_R(tmp)
             ss = snd * tmp * ct.gas_constant
             self.prop[3].set(ss)
 

@@ -30,13 +30,13 @@ class ThermoProp:
         self.thermoframe = thermoframe
         self.entry = UnitVar(master, units, defaultunit)
         self.entry.grid(column=1, row=row, sticky=tk.W)
-        self.entry.v.config(state=tk.DISABLED, bg='lightgray')
+        self.entry.state_variable_entry.config(state=tk.DISABLED, bg='lightgray')
         self.checked = tk.IntVar()
         self.checked.set(0)
         self.name = name
-        self.c = tk.Checkbutton(master, text=name, variable=self.checked,
+        self.check_box = tk.Checkbutton(master, text=name, variable=self.checked,
                                 onvalue=1, offvalue=0, command=self.check)
-        self.c.grid(column=0, row=row, sticky=tk.W + tk.N)
+        self.check_box.grid(column=0, row=row, sticky=tk.W + tk.N)
 
     def check(self):
         if self == self.thermoframe.last1:
@@ -59,9 +59,9 @@ class ThermoProp:
 
     def _check(self):
         if self.isChecked():
-            self.entry.v.config(state=tk.NORMAL, bg='white')
+            self.entry.state_variable_entry.config(state=tk.NORMAL, bg='white')
         else:
-            self.entry.v.config(state=tk.DISABLED, bg='lightgray')
+            self.entry.state_variable_entry.config(state=tk.DISABLED, bg='lightgray')
 
     def isChecked(self):
         return self.checked.get()
